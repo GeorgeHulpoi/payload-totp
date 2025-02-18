@@ -9,10 +9,14 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { v4 as uuidv4 } from 'uuid'
 
+import { createUser } from './helpers/create-user'
+import { getUsersCollection } from './helpers/get-users-collection'
+
 type ISetupResult = Promise<{
 	port: number
 	baseURL: string
 	teardown: () => Promise<void>
+	mongoUri: string
 }>
 
 export const test = base.extend<
@@ -20,6 +24,8 @@ export const test = base.extend<
 		helpers: {
 			createFirstUser: (args: { page: Page; baseURL: string }) => Promise<void>
 			setupTotp: (args: { page: Page; baseURL: string }) => Promise<{ totpSecret: string }>
+			createUser: typeof createUser
+			getUsersCollection: typeof getUsersCollection
 		}
 	},
 	{
@@ -52,7 +58,7 @@ export const test = base.extend<
 						NODE_ENV: 'production',
 						PORT: port.toString(),
 						FORCE_SETUP: forceSetup ? '1' : undefined,
-						DATABASE_URI: `${mongod.getUri()}&retryWrites=true`,
+						DATABASE_URI: mongod.getUri(),
 					},
 				})
 
@@ -74,6 +80,7 @@ export const test = base.extend<
 				return {
 					port,
 					baseURL,
+					mongoUri: mongod.getUri(),
 					teardown: async () => {
 						await new Promise((resolve, reject) => {
 							child.on('close', resolve)
@@ -136,6 +143,8 @@ export const test = base.extend<
 
 				return { totpSecret: totpSecret || '' }
 			},
+			createUser,
+			getUsersCollection,
 		})
 	},
 })
