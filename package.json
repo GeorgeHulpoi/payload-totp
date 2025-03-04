@@ -63,7 +63,7 @@
 		"lint:fix": "eslint ./src --fix",
 		"prepublishOnly": "pnpm clean && pnpm build",
 		"test": "jest",
-		"e2e:test": "playwright test"
+		"e2e:test": "playwright test --ui"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.2.0",

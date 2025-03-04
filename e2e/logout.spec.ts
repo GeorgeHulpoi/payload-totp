@@ -25,10 +25,8 @@ test.describe('Log out', () => {
 		await page.close()
 	})
 
-	test('should remove totp cookie', async () => {
-		await page.getByRole('button', { name: 'Open Menu' }).click()
-		await page.getByRole('link', { name: 'Log out' }).click()
-		await page.waitForURL(/^(.*?)\/admin\/login$/g)
+	test('should remove totp cookie', async ({ helpers }) => {
+		helpers.logout({ page })
 		const cookies = await page.context().cookies()
 		const payloadTotpCookie = cookies.find((cookie) => cookie.name === 'payload-totp')
 		expect(payloadTotpCookie).toBeUndefined()

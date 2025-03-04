@@ -11,11 +11,15 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { createFirstUser } from './helpers/create-first-user'
 import type { ISetupArgs, ISetupResult } from './types'
+import { logout } from './helpers/logout'
+import { login } from './helpers/login'
 
 export const test = base.extend<
 	{
 		helpers: {
 			createFirstUser: typeof createFirstUser
+			logout: typeof logout
+			login: typeof login
 			setupTotp: (args: {
 				page: Page
 				baseURL: string
@@ -108,6 +112,8 @@ export const test = base.extend<
 	helpers: async ({}, use) => {
 		await use({
 			createFirstUser,
+			logout,
+			login,
 			setupTotp: async ({
 				page,
 				baseURL,

@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test'
-import { faker } from '@faker-js/faker'
+import { expect, Page } from '@playwright/test'
+import { Secret, TOTP } from 'otpauth'
 
 import { test } from './fixtures'
 
@@ -19,7 +19,7 @@ test.describe('users', () => {
 
 		await helpers.createFirstUser({ page, baseURL })
 		await page.waitForURL(/^(.*?)\/admin\/setup-totp(\?back=.*?)?$/g)
-		await helpers.setupTotp({ page, baseURL })
+		const { totpSecret } = await helpers.setupTotp({ page, baseURL })
 
 		await Promise.all([
 			page.request.post(`${baseURL}/api/users`, {
@@ -35,6 +35,51 @@ test.describe('users', () => {
 				},
 			}),
 		])
+
+		await helpers.logout({ page })
+		await helpers.login({
+			page,
+			baseURL,
+			email: 'test1@domain.com',
+			password: 'test1_pass',
+		})
+		await page.waitForURL(/^(.*?)\/admin\/setup-totp/g)
+		await helpers.setupTotp({ page, baseURL })
+
+		await helpers.logout({ page })
+		await helpers.login({
+			page,
+			baseURL,
+			email: 'test2@domain.com',
+			password: 'test2_pass',
+		})
+		await page.waitForURL(/^(.*?)\/admin\/setup-totp/g)
+		await helpers.setupTotp({ page, baseURL })
+		await helpers.logout({ page })
+		await helpers.login({
+			page,
+			baseURL,
+			email: 'human@domain.com',
+			password: '123456',
+		})
+		await page.waitForURL(/^(.*?)\/admin\/verify-totp/g)
+
+		const totp = new TOTP({
+			algorithm: 'SHA1',
+			digits: 6,
+			issuer: 'Payload',
+			label: 'human@domain.com',
+			period: 30,
+			secret: Secret.fromBase32(totpSecret || ''),
+		})
+
+		const token = totp.generate()
+
+		await page
+			.locator('css=dialog#verify-totp input:first-child[type="text"]')
+			.pressSequentially(token, { delay: 300 })
+
+		await page.waitForURL(/^(.*?)\/admin$/g)
 	})
 
 	test.afterAll(async () => {
@@ -45,19 +90,21 @@ test.describe('users', () => {
 	test.describe('API', () => {
 		test.describe.configure({ mode: 'serial' })
 
-		test.beforeAll(async () => {
-			const res = await page.request.post(`${baseURL}/api/users`, {
-				data: {
-					email: faker.internet.email(),
-					password: faker.internet.password(),
-				},
-			})
+		test('should not expose totpSecret and hasTotp', async () => {
+			const res = await page.request.get(`${baseURL}/api/users`)
+			const body = await res.json()
+			console.log(body)
 			expect(res.ok()).toBeTruthy()
 			const data = await res.json()
-			expect(data).toEqual({
-				message: 'An error has occurred.',
-				ok: false,
-			})
+			expect(data.totalDocs).toEqual(3)
+			for (const doc of data.docs) {
+				expect(doc.totpSecret).toBeUndefined()
+
+				console.log(doc)
+				if (doc.email !== 'human@domain.com') {
+					expect(doc.hasTotp).toBeFalsy()
+				}
+			}
 		})
 	})
 
