@@ -2,6 +2,12 @@
 [![NPM](https://img.shields.io/npm/v/payload-totp)](https://www.npmjs.com/package/payload-totp)
 [![Downloads](http://img.shields.io/npm/dm/payload-totp.svg)](https://www.npmjs.com/package/payload-totp)
 ![banner](https://github.com/user-attachments/assets/631dd9bf-8425-439e-9988-d25b6d5d3f6e)
+
+[![Sponsor Me](https://github.com/user-attachments/assets/c6f96290-58c0-4a5b-ba53-136730d097e9)](https://github.com/sponsors/GeorgeHulpoi)
+[![Follow on LinkedIn](https://github.com/user-attachments/assets/01fdc0f0-2642-4444-b978-74c709f1b7bc)](https://www.linkedin.com/in/george-hulpoi/)
+[![Follow on X](https://github.com/user-attachments/assets/090656f2-d19d-422e-8c83-99742a39b47a)](https://x.com/GeorgeHulpoi)
+[![Read my blog](https://github.com/user-attachments/assets/55ba629a-77b8-4cba-a09b-b63d1c90402b)](https://en.george-hulpoi.dev/blog)
+
 If you find this plugin useful, consider supporting its development through donations. Your contributions help improve security and stability!  
 
 
