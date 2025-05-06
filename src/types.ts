@@ -10,5 +10,6 @@ export type PayloadTOTPConfig = {
 }
 
 export type UserWithTotp = {
+	forceTotp: boolean
 	hasTotp: boolean
 } & User

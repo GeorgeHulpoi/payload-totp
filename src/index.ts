@@ -185,6 +185,11 @@ const payloadTotp =
 									},
 									virtual: true,
 								} as CheckboxField,
+								{
+									name: 'forceTotp',
+									type: 'checkbox',
+									label: 'Force TOTP',
+								} as CheckboxField,
 							],
 							hooks: {
 								...(collection.hooks || {}),
