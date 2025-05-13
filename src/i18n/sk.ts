@@ -9,6 +9,10 @@ export const sk: CustomTranslationsObject = {
         },
         fieldDescription:
             'Použite autentifikačnú aplikáciu alebo rozšírenie prehliadača na získanie kódov dvojfaktorovej autentifikácie, keď budete požiadaní.',
+        forceTotp: {
+            description: 'Ak je začiarknuté, tento používateľ bude musieť nastaviť a používať TOTP.',
+            label: 'Vynútiť TOTP'
+        },
         setup: {
             addCodeManually: 'Pridať kód manuálne',
             button: 'Nastaviť',

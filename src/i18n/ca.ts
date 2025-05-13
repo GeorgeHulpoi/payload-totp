@@ -9,6 +9,10 @@ export const ca: CustomTranslationsObject = {
         },
         fieldDescription:
             'Utilitza una aplicació d\'autenticació o una extensió del navegador per obtenir codis d\'autenticació de dos factors quan se\'t demani.',
+        forceTotp: {
+            description: 'Si està marcat, aquest usuari haurà de configurar i utilitzar TOTP.',
+            label: 'Força TOTP'
+        },
         setup: {
             addCodeManually: 'Afegir codi manualment',
             button: 'Configurar',

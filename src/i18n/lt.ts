@@ -9,6 +9,10 @@ export const lt: CustomTranslationsObject = {
         },
         fieldDescription:
             'Naudokite autentifikacijos programą arba naršyklės plėtinį, kad gautumėte dviejų faktorių autentifikacijos kodus, kai būsite paprašytas.',
+        forceTotp: {
+            description: 'Jei pažymėta, šis vartotojas turės nustatyti ir naudoti TOTP.',
+            label: 'Priverstinis TOTP'
+        },
         setup: {
             addCodeManually: 'Pridėti kodą rankiniu būdu',
             button: 'Nustatyti',

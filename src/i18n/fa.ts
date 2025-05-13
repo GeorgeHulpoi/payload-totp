@@ -9,6 +9,10 @@ export const fa: CustomTranslationsObject = {
         },
         fieldDescription:
             'از یک برنامه احراز هویت یا افزونه مرورگر برای دریافت کدهای احراز هویت دو مرحله‌ای در صورت درخواست استفاده کنید.',
+        forceTotp: {
+            description: 'در صورت علامت زدن، این کاربر ملزم به تنظیم و استفاده از TOTP خواهد بود.',
+            label: 'اجبار TOTP'
+        },
         setup: {
             addCodeManually: 'افزودن کد به صورت دستی',
             button: 'راه‌اندازی',

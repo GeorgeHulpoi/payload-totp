@@ -9,6 +9,10 @@ export const sl: CustomTranslationsObject = {
         },
         fieldDescription:
             'Uporabite aplikacijo za avtentikacijo ali razširitev brskalnika za pridobivanje dvočlenih avtentikacijskih kod, ko vas sistem za to zaprosi.',
+        forceTotp: {
+            description: 'Če je označeno, bo ta uporabnik moral nastaviti in uporabljati TOTP.',
+            label: 'Vsili TOTP'
+        },
         setup: {
             addCodeManually: 'Dodaj kodo ročno',
             button: 'Nastavi',

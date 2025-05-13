@@ -9,6 +9,10 @@ export const th: CustomTranslationsObject = {
         },
         fieldDescription:
             'ใช้แอปยืนยันตัวตนหรือส่วนขยายเบราว์เซอร์เพื่อรับรหัสยืนยันตัวตนแบบสองขั้นตอนเมื่อมีการร้องขอ',
+        forceTotp: {
+            description: 'หากเลือกช่องนี้ ผู้ใช้จะต้องตั้งค่าและใช้ TOTP',
+            label: 'บังคับใช้ TOTP'
+        },
         setup: {
             addCodeManually: 'เพิ่มรหัสด้วยตนเอง',
             button: 'ตั้งค่า',

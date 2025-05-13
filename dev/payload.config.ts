@@ -39,6 +39,9 @@ export default buildConfig({
 			collection: 'users',
 			forceSetup: process.env.FORCE_SETUP === '1',
 			disableAccessWrapper: process.env.DISABLE_ACCESS_WRAPPER === '1',
+			userSpecificForceTotpField: {
+				enabled: true,
+			},
 		}),
 	],
 	secret: process.env.PAYLOAD_SECRET || 'test-secret_key',

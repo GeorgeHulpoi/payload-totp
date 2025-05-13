@@ -9,6 +9,10 @@ export const sv: CustomTranslationsObject = {
         },
         fieldDescription:
             'Använd en autentiseringsapp eller webbläsartillägg för att få tvåfaktorsautentiseringskoder när du uppmanas.',
+        forceTotp: {
+            description: 'Om markerad måste den här användaren konfigurera och använda TOTP.',
+            label: 'Tvinga TOTP'
+        },
         setup: {
             addCodeManually: 'Lägg till kod manuellt',
             button: 'Konfigurera',

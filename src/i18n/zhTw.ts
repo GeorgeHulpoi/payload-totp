@@ -9,6 +9,10 @@ export const zhTw: CustomTranslationsObject = {
         },
         fieldDescription:
             '在需要時使用驗證器應用程式或瀏覽器擴充功能來獲取雙因素驗證碼。',
+        forceTotp: {
+            description: '如果選中此框，則該用戶將被要求設置並使用TOTP。',
+            label: '強制啟用TOTP'
+        },
         setup: {
             addCodeManually: '手動新增驗證碼',
             button: '設定',

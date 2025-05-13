@@ -9,6 +9,10 @@ export const bg: CustomTranslationsObject = {
         },
         fieldDescription:
             'Използвайте приложение за автентикация или разширение на браузъра, за да получите кодове за двуфакторна автентикация, когато се изисква.',
+        forceTotp: {
+            description: 'Ако е отметнато, този потребител ще трябва да настрои и използва TOTP.',
+            label: 'Принудително TOTP'
+        },
         setup: {
             addCodeManually: 'Добавете код ръчно',
             button: 'Настройка',

@@ -9,6 +9,10 @@ export const ja: CustomTranslationsObject = {
         },
         fieldDescription:
             'プロンプトが表示されたときに、認証アプリまたはブラウザ拡張機能を使用して二要素認証コードを取得してください。',
+        forceTotp: {
+            description: 'チェックすると、このユーザーはTOTPの設定と使用が必要になります。',
+            label: 'TOTPを強制'
+        },
         setup: {
             addCodeManually: 'コードを手動で追加',
             button: '設定',

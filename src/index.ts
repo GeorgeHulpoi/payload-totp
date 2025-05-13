@@ -1,5 +1,7 @@
-import type { CheckboxField, Config, TextField, UIField } from 'payload'
+import type { TFunction } from '@payloadcms/translations'
+import type { CheckboxField, Config, Field, TextField, UIField } from 'payload'
 
+import type { CustomTranslationsKeys } from './i18n/types.js'
 import type { PayloadTOTPConfig } from './types.js'
 
 import { removeEndpointHandler } from './api/remove.js'
@@ -88,6 +90,90 @@ const payloadTotp =
 			collections: [
 				...(config.collections || []).map((collection) => {
 					if (collection.slug === pluginOptions.collection) {
+						const existingFields: Field[] = [...(collection.fields || [])]
+
+						const pluginAddedFields: Field[] = [
+							{
+								name: 'totpSecret',
+								type: 'text',
+								access: {
+									create: () => false,
+									read: () => false,
+									update: () => false,
+								},
+								admin: {
+									disableBulkEdit: true,
+									disableListColumn: true,
+									disableListFilter: true,
+									hidden: true,
+								},
+								disableBulkEdit: true,
+								disableListColumn: true,
+								disableListFilter: true,
+							} as TextField,
+							{
+								name: 'totpSecretUI',
+								type: 'ui',
+								admin: {
+									components: {
+										Field: {
+											path: 'payload-totp/rsc#TOTPField',
+											serverProps: {
+												pluginOptions,
+											},
+										},
+									},
+									disableListColumn: true,
+								},
+							} as UIField,
+							{
+								name: 'hasTotp',
+								type: 'checkbox',
+								access: {
+									read: ({ data, req: { user } }) =>
+										data && user && data?.id === user?.id,
+								},
+								admin: {
+									disableBulkEdit: true,
+									disableListColumn: true,
+									disableListFilter: true,
+									hidden: true,
+								},
+								hooks: {
+									afterRead: [setHasTotp(pluginOptions)],
+								},
+								virtual: true,
+							} as CheckboxField,
+						]
+
+						if (pluginOptions.userSpecificForceTotpField?.enabled) {
+							const forceTotpFieldDefinition: CheckboxField = {
+								name: 'forceTotp',
+								type: 'checkbox',
+								admin: {
+									description: ({ t: defaultT }) => {
+										const t =
+											defaultT as unknown as TFunction<CustomTranslationsKeys>
+										return t('totpPlugin:forceTotp:description')
+									},
+								},
+								defaultValue: false,
+								label: ({ t: defaultT }) => {
+									const t =
+										defaultT as unknown as TFunction<CustomTranslationsKeys>
+									return t('totpPlugin:forceTotp:label')
+								},
+								required: false,
+							}
+
+							if (pluginOptions.userSpecificForceTotpField.access) {
+								forceTotpFieldDefinition.access =
+									pluginOptions.userSpecificForceTotpField.access
+							}
+
+							pluginAddedFields.push(forceTotpFieldDefinition)
+						}
+
 						return {
 							...collection,
 							access: {
@@ -132,60 +218,7 @@ const payloadTotp =
 										: []),
 								],
 							},
-							fields: [
-								...(collection.fields || []),
-								{
-									name: 'totpSecret',
-									type: 'text',
-									access: {
-										create: () => false,
-										read: () => false,
-										update: () => false,
-									},
-									admin: {
-										disableBulkEdit: true,
-										disableListColumn: true,
-										disableListFilter: true,
-										hidden: true,
-									},
-									disableBulkEdit: true,
-									disableListColumn: true,
-									disableListFilter: true,
-								} as TextField,
-								{
-									name: 'totpSecretUI',
-									type: 'ui',
-									admin: {
-										components: {
-											Field: {
-												path: 'payload-totp/rsc#TOTPField',
-												serverProps: {
-													pluginOptions,
-												},
-											},
-										},
-										disableListColumn: true,
-									},
-								} as UIField,
-								{
-									name: 'hasTotp',
-									type: 'checkbox',
-									access: {
-										read: ({ data, req: { user } }) =>
-											data && user && data?.id === user?.id,
-									},
-									admin: {
-										disableBulkEdit: true,
-										disableListColumn: true,
-										disableListFilter: true,
-										hidden: true,
-									},
-									hooks: {
-										afterRead: [setHasTotp(pluginOptions)],
-									},
-									virtual: true,
-								} as CheckboxField,
-							],
+							fields: [...existingFields, ...pluginAddedFields],
 							hooks: {
 								...(collection.hooks || {}),
 								afterLogout: [

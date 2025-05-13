@@ -9,6 +9,10 @@ export const it: CustomTranslationsObject = {
         },
         fieldDescription:
             'Utilizza un\'app di autenticazione o un\'estensione del browser per ottenere i codici di autenticazione a due fattori quando richiesto.',
+        forceTotp: {
+            description: 'Se selezionato, questo utente dovrà configurare e utilizzare TOTP.',
+            label: 'Forza TOTP'
+        },
         setup: {
             addCodeManually: 'Aggiungi codice manualmente',
             button: 'Configura',

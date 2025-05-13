@@ -9,6 +9,10 @@ export const de: CustomTranslationsObject = {
         },
         fieldDescription:
             'Verwenden Sie eine Authentifizierungs-App oder Browser-Erweiterung, um bei Aufforderung Codes für die Zwei-Faktor-Authentifizierung zu erhalten.',
+        forceTotp: {
+            description: 'Wenn diese Option aktiviert ist, muss dieser Benutzer TOTP einrichten und verwenden.',
+            label: 'TOTP erzwingen'
+        },
         setup: {
             addCodeManually: 'Code manuell hinzufügen',
             button: 'Einrichten',

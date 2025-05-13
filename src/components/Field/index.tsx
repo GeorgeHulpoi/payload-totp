@@ -23,6 +23,7 @@ export const TOTPField = (args: Args) => {
 	} = args
 
 	const user = _user as unknown as UserWithTotp
+	const forceTotp = !user?.forceTotp && !pluginOptions.forceSetup
 
 	if (!user || user.id !== id) {
 		return null
@@ -44,7 +45,7 @@ export const TOTPField = (args: Args) => {
 				<span className={styles.description}>{i18n.t('totpPlugin:fieldDescription')}</span>
 			</div>
 			<div className={styles.action}>
-				{user.hasTotp && !pluginOptions.forceSetup && (
+				{user.hasTotp && forceTotp && (
 					<Remove
 						i18n={i18n}
 						payload={payload}
@@ -52,7 +53,7 @@ export const TOTPField = (args: Args) => {
 						user={user}
 					/>
 				)}
-				{!user.hasTotp && !pluginOptions.forceSetup && (
+				{!user.hasTotp && forceTotp && (
 					<Setup backUrl={url} i18n={i18n} payload={payload} />
 				)}
 			</div>

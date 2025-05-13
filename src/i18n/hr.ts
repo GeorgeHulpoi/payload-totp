@@ -9,6 +9,10 @@ export const hr: CustomTranslationsObject = {
         },
         fieldDescription:
             'Koristite aplikaciju za autentifikaciju ili proširenje preglednika za dobivanje kodova dvofaktorske autentifikacije kada se to zatraži.',
+        forceTotp: {
+            description: 'Ako je označeno, ovaj korisnik će morati postaviti i koristiti TOTP.',
+            label: 'Prisili TOTP'
+        },
         setup: {
             addCodeManually: 'Dodaj kod ručno',
             button: 'Postavi',

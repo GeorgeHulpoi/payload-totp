@@ -21,7 +21,7 @@ export function removeEndpointHandler(pluginOptions: PayloadTOTPConfig) {
 			return Response.json({ message: i18n.t('error:unauthorized'), ok: false })
 		}
 
-		if (!user.hasTotp || pluginOptions.forceSetup) {
+		if (!user.hasTotp || user.forceTotp || pluginOptions.forceSetup) {
 			return Response.json({ message: i18n.t('error:unauthorized'), ok: false })
 		}
 

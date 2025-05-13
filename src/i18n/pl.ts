@@ -9,6 +9,10 @@ export const pl: CustomTranslationsObject = {
         },
         fieldDescription:
             'Użyj aplikacji uwierzytelniającej lub rozszerzenia przeglądarki, aby otrzymywać kody uwierzytelniania dwuetapowego gdy zostaniesz o to poproszony.',
+        forceTotp: {
+            description: 'Jeśli zaznaczone, ten użytkownik będzie musiał skonfigurować i używać TOTP.',
+            label: 'Wymuś TOTP'
+        },
         setup: {
             addCodeManually: 'Dodaj kod ręcznie',
             button: 'Konfiguracja',

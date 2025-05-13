@@ -9,6 +9,10 @@ export const da: CustomTranslationsObject = {
         },
         fieldDescription:
             'Brug en autentificeringsapp eller browserudvidelse til at få to-faktor autentificeringskoder, når du bliver bedt om det.',
+        forceTotp: {
+            description: 'Hvis markeret, skal denne bruger opsætte og bruge TOTP.',
+            label: 'Tving TOTP'
+        },
         setup: {
             addCodeManually: 'Tilføj kode manuelt',
             button: 'Opsæt',

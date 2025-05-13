@@ -9,6 +9,10 @@ export const hu: CustomTranslationsObject = {
         },
         fieldDescription:
             'Használjon hitelesítő alkalmazást vagy böngésző bővítményt kétfaktoros hitelesítési kódok beszerzéséhez amikor szükséges.',
+        forceTotp: {
+            description: 'Ha be van jelölve, ennek a felhasználónak be kell állítania és használnia kell a TOTP-t.',
+            label: 'TOTP kényszerítése'
+        },
         setup: {
             addCodeManually: 'Kód manuális hozzáadása',
             button: 'Beállítás',

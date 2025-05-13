@@ -9,6 +9,10 @@ export const ar: CustomTranslationsObject = {
         },
         fieldDescription:
             'استخدم تطبيق مصادقة أو إضافة متصفح للحصول على رموز المصادقة الثنائية عند الطلب.',
+        forceTotp: {
+            description: 'إذا تم تحديده، سيُطلب من هذا المستخدم إعداد واستخدام TOTP.',
+            label: 'فرض TOTP'
+        },
         setup: {
             addCodeManually: 'إضافة الرمز يدوياً',
             button: 'إعداد',

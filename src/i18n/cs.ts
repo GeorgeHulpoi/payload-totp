@@ -9,6 +9,10 @@ export const cs: CustomTranslationsObject = {
         },
         fieldDescription:
             'Použijte autentizační aplikaci nebo rozšíření prohlížeče pro získání dvoufaktorových autentizačních kódů při výzvě.',
+        forceTotp: {
+            description: 'Je-li zaškrtnuto, bude tento uživatel muset nastavit a používat TOTP.',
+            label: 'Vynutit TOTP'
+        },
         setup: {
             addCodeManually: 'Přidat kód ručně',
             button: 'Nastavit',

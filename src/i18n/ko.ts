@@ -9,6 +9,10 @@ export const ko: CustomTranslationsObject = {
         },
         fieldDescription:
             '인증이 필요할 때 인증 앱이나 브라우저 확장 프로그램을 사용하여 2단계 인증 코드를 받으세요.',
+        forceTotp: {
+            description: '선택하면 이 사용자는 TOTP를 설정하고 사용해야 합니다.',
+            label: 'TOTP 강제 적용'
+        },
         setup: {
             addCodeManually: '수동으로 코드 추가',
             button: '설정',

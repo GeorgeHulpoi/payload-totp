@@ -9,6 +9,10 @@ export const ro: CustomTranslationsObject = {
         },
         fieldDescription:
             'Folosiți o aplicație de autentificare sau extensie de browser pentru a obține coduri de autentificare cu două factori când vi se solicită.',
+        forceTotp: {
+            description: 'Dacă este bifat, acest utilizator va trebui să configureze și să utilizeze TOTP.',
+            label: 'Forțează TOTP'
+        },
         setup: {
             addCodeManually: 'Adăugați codul manual',
             button: 'Configurare',

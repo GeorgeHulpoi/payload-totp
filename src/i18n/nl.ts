@@ -9,6 +9,10 @@ export const nl: CustomTranslationsObject = {
         },
         fieldDescription:
             'Gebruik een authenticator app of browserextensie om tweefactorauthenticatiecodes te krijgen wanneer daarom wordt gevraagd.',
+        forceTotp: {
+            description: 'Indien aangevinkt, moet deze gebruiker TOTP instellen en gebruiken.',
+            label: 'TOTP afdwingen'
+        },
         setup: {
             addCodeManually: 'Code handmatig toevoegen',
             button: 'Instellen',

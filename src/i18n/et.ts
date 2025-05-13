@@ -9,6 +9,10 @@ export const et: CustomTranslationsObject = {
         },
         fieldDescription:
             'Kasutage autentimise rakendust või brauseri laiendust kahefaktorilise autentimise koodide saamiseks, kui seda palutakse.',
+        forceTotp: {
+            description: 'Kui see on märgitud, peab see kasutaja seadistama ja kasutama TOTP-d.',
+            label: 'Sunni TOTP'
+        },
         setup: {
             addCodeManually: 'Lisa kood käsitsi',
             button: 'Seadista',

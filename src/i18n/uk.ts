@@ -9,6 +9,10 @@ export const uk: CustomTranslationsObject = {
         },
         fieldDescription:
             'Використовуйте додаток автентифікації або розширення браузера для отримання кодів двофакторної автентифікації за запитом.',
+        forceTotp: {
+            description: 'Якщо позначено, цей користувач повинен буде налаштувати та використовувати TOTP.',
+            label: 'Примусовий TOTP'
+        },
         setup: {
             addCodeManually: 'Додати код вручну',
             button: 'Налаштувати',

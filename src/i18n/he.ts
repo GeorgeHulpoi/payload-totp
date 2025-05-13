@@ -9,6 +9,10 @@ export const he: CustomTranslationsObject = {
         },
         fieldDescription:
             'השתמש באפליקציית אימות או תוסף דפדפן לקבלת קודי אימות דו-שלבי כשתתבקש.',
+        forceTotp: {
+            description: 'אם מסומן, משתמש זה יידרש להגדיר ולהשתמש ב-TOTP.',
+            label: 'אלץ TOTP'
+        },
         setup: {
             addCodeManually: 'הוסף קוד ידנית',
             button: 'הגדר',

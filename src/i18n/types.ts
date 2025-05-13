@@ -1,6 +1,4 @@
-import type {
-    NestedKeysStripped
-} from '@payloadcms/translations'
+import type { NestedKeysStripped } from '@payloadcms/translations'
 
 type I18n = {
 	totpPlugin: {
@@ -10,6 +8,10 @@ type I18n = {
 			alreadySet: string
 		}
 		fieldDescription: string
+		forceTotp: {
+			description: string
+			label: string
+		}
 		setup: {
 			addCodeManually: string
 			button: string

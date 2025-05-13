@@ -9,6 +9,10 @@ export const az: CustomTranslationsObject = {
         },
         fieldDescription:
             'Tələb olunduqda iki faktorlu autentifikasiya kodlarını almaq üçün autentifikasiya tətbiqi və ya brauzer genişlənməsindən istifadə edin.',
+        forceTotp: {
+            description: 'Əgər işarələnibsə, bu istifadəçi TOTP qurmalı və istifadə etməlidir.',
+            label: 'TOTP məcbur et'
+        },
         setup: {
             addCodeManually: 'Kodu manual əlavə et',
             button: 'Quraşdır',

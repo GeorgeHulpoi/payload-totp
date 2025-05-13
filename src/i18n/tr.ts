@@ -9,6 +9,10 @@ export const tr: CustomTranslationsObject = {
         },
         fieldDescription:
             'İstendiğinde iki faktörlü kimlik doğrulama kodlarını almak için bir kimlik doğrulama uygulaması veya tarayıcı eklentisi kullanın.',
+        forceTotp: {
+            description: 'İşaretlenirse, bu kullanıcının TOTP\'yi kurması ve kullanması gerekir.',
+            label: 'TOTP\'yi Zorunlu Kıl'
+        },
         setup: {
             addCodeManually: 'Kodu manuel olarak ekle',
             button: 'Kurulum',

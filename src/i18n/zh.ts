@@ -9,6 +9,10 @@ export const zh: CustomTranslationsObject = {
         },
         fieldDescription:
             '在需要时使用身份验证应用或浏览器扩展获取双因素认证码。',
+        forceTotp: {
+            description: '如果选中此框，则该用户将被要求设置并使用TOTP。',
+            label: '强制启用TOTP'
+        },
         setup: {
             addCodeManually: '手动添加代码',
             button: '设置',

@@ -1,5 +1,5 @@
 import type { TOTP } from 'otpauth'
-import type { CollectionSlug, User } from 'payload'
+import type { CheckboxField, CollectionSlug, User } from 'payload'
 
 export type PayloadTOTPConfig = {
 	collection: CollectionSlug
@@ -7,8 +7,13 @@ export type PayloadTOTPConfig = {
 	disabled?: boolean
 	forceSetup?: boolean
 	totp?: Partial<Pick<TOTP, 'algorithm' | 'digits' | 'issuer' | 'period'>>
+	userSpecificForceTotpField?: {
+		access?: CheckboxField['access']
+		enabled?: boolean
+	}
 }
 
 export type UserWithTotp = {
+	forceTotp: boolean
 	hasTotp: boolean
 } & User
