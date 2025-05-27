@@ -58,6 +58,22 @@ export default config
 
 __IMPORTANT__: The plugin overrides all collections, therefore it should be the last plugin in the array, or at least not followed by plugins that add collections/globals.
 
+Now, you need to modify the `middleware.ts` or create it if doesn't exist. The middleware will pass the `pathname` as a header. This is necessary because we don't have access to the `pathname` in the server-side component. Without this part, it will create an endless redirect loop.
+
+```ts
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export function middleware(request: NextRequest) {
+	const pathname = request.nextUrl.pathname
+	const response = NextResponse.next()
+
+	response.headers.append('x-pathname', pathname)
+
+	return response
+}
+```
+
 ## Options
 
 ### `collection`

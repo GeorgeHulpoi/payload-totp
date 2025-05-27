@@ -17,7 +17,7 @@ export const TOTPProvider = async (args: Args) => {
 	const { children, payload, pluginOptions, user: _user } = args
 	const user = _user as UserWithTotp
 	const headersList = await headers()
-	const pathname = headersList.get('x-pathname')!
+	const pathname = headersList.get('x-pathname') || '/'
 
 	const verifyUrl = formatAdminURL({
 		adminRoute: payload.config.routes.admin,
@@ -31,9 +31,20 @@ export const TOTPProvider = async (args: Args) => {
 		serverURL: payload.config.serverURL,
 	})
 
-	if (user && user.hasTotp && !['api-key', 'totp'].includes(user._strategy) && pathname !== verifyUrl) {
+	if (
+		user &&
+		user.hasTotp &&
+		!['api-key', 'totp'].includes(user._strategy) &&
+		pathname !== verifyUrl
+	) {
 		redirect(`${verifyUrl}?back=${encodeURIComponent(pathname)}`)
-	} else if (user && !user.hasTotp && pluginOptions.forceSetup && pathname !== setupUrl && user._strategy !== 'api-key') {
+	} else if (
+		user &&
+		!user.hasTotp &&
+		pluginOptions.forceSetup &&
+		pathname !== setupUrl &&
+		user._strategy !== 'api-key'
+	) {
 		redirect(`${setupUrl}?back=${encodeURIComponent(pathname)}`)
 	} else {
 		return (
