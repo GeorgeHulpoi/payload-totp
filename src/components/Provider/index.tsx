@@ -22,13 +22,11 @@ export const TOTPProvider = async (args: Args) => {
 	const verifyUrl = formatAdminURL({
 		adminRoute: payload.config.routes.admin,
 		path: '/verify-totp',
-		serverURL: payload.config.serverURL,
 	})
 
 	const setupUrl = formatAdminURL({
 		adminRoute: payload.config.routes.admin,
 		path: '/setup-totp',
-		serverURL: payload.config.serverURL,
 	})
 
 	if (
@@ -37,7 +35,7 @@ export const TOTPProvider = async (args: Args) => {
 		!['api-key', 'totp'].includes(user._strategy) &&
 		pathname !== verifyUrl
 	) {
-		redirect(`${verifyUrl}?back=${encodeURIComponent(pathname)}`)
+		redirect(`${payload.config.serverURL}${verifyUrl}?back=${encodeURIComponent(pathname)}`)
 	} else if (
 		user &&
 		!user.hasTotp &&
@@ -45,7 +43,7 @@ export const TOTPProvider = async (args: Args) => {
 		pathname !== setupUrl &&
 		user._strategy !== 'api-key'
 	) {
-		redirect(`${setupUrl}?back=${encodeURIComponent(pathname)}`)
+		redirect(`${payload.config.serverURL}${setupUrl}?back=${encodeURIComponent(pathname)}`)
 	} else {
 		return (
 			<TOTPProviderClient
