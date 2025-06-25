@@ -160,15 +160,67 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 		[length, disabled, updateInputValue],
 	)
 
+	const onHiddenInput = useCallback(
+		(event: FormEvent<HTMLInputElement>) => {
+			if (disabled) {
+				return
+			}
+
+			const rawValue = event.currentTarget.value
+
+			let sanitizedValue = rawValue
+				.trim()
+				.split('')
+				.filter((ch) => !isNaN(parseInt(ch)))
+
+			if (sanitizedValue.length > length) {
+				sanitizedValue = sanitizedValue.slice(0, length)
+			}
+
+			sanitizedValue.forEach((char, index) => {
+				const el = inputs.current[index]
+				if (el) {
+					el.value = char
+				}
+			})
+
+			focusAndSelectInput(inputs.current[sanitizedValue.length - 1])
+
+			if (onFilled && sanitizedValue.length === length) {
+				onFilled(sanitizedValue.join(''))
+			}
+		},
+		[length, disabled, onFilled],
+	)
+
 	return (
 		<>
-			<input name={name} ref={hiddenInput} type="hidden" />
+			{/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+			<input
+				autoComplete="one-time-code"
+				name={name}
+				onInput={(e) => onHiddenInput(e)}
+				ref={hiddenInput}
+				style={{
+					border: 0,
+					clip: 'rect(0,0,0,0)',
+					height: '1px',
+					margin: '-1px',
+					overflow: 'hidden',
+					padding: 0,
+					position: 'absolute',
+					width: '1px',
+				}}
+			/>
 			<div className={cn(styles.root, disabled && styles.disabled)}>
 				{Array.from({ length }, (_, index) => index).map((i) => (
 					// eslint-disable-next-line jsx-a11y/control-has-associated-label
 					<input
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={i === 0}
+						// Tell 1password to ignore this input
+						// https://developer.1password.com/docs/web/compatible-website-design
+						data-1p-ignore={true}
 						disabled={disabled}
 						key={i}
 						maxLength={1}
