@@ -13,8 +13,8 @@ type Args = {
 export default async function QRCode({ totp }: Args) {
 	const src = await toDataURL(totp.toString(), {
 		color: {
-			dark: '#fff',
-			light: '#00000000',
+			dark: '#000',
+			light: '#fff',
 		},
 		margin: 0,
 	})
