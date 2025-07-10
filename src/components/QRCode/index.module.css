@@ -1,7 +1,5 @@
-:global(html[data-theme='light']) .root {
-	filter: invert(1);
-}
-
 .root {
 	user-select: none;
+	background: #fff;
+	padding: 16px;
 }
