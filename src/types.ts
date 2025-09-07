@@ -1,5 +1,5 @@
 import type { TOTP } from 'otpauth'
-import type { CollectionSlug, User } from 'payload'
+import type { CollectionSlug, TypedUser } from 'payload'
 
 export type PayloadTOTPConfig = {
 	collection: CollectionSlug
@@ -11,4 +11,4 @@ export type PayloadTOTPConfig = {
 
 export type UserWithTotp = {
 	hasTotp: boolean
-} & User
+} & TypedUser

@@ -46,7 +46,7 @@ export const TOTPVerify: React.FC<Args> = (args) => {
 		redirect(url)
 	}
 
-	if (!user.hasTotp || (user.hasTotp && user._strategy === 'totp')) {
+	if (!user.hasTotp || (user.hasTotp && (user as any).strategy === 'totp')) {
 		const url = formatAdminURL({
 			adminRoute,
 			path: '/',
