@@ -26,13 +26,13 @@ export const totpAccess: (innerAccess?: Access) => Access = (innerAccess) => {
 		}
 
 		if (
-			(pluginOptions.forceSetup && user._strategy === 'totp') ||
-			user._strategy === 'api-key'
+			(pluginOptions.forceSetup && (<any>user)._strategy === 'totp') ||
+			(<any>user)._strategy === 'api-key'
 		) {
 			return innerAccess ? innerAccess(args) : true
 		} else {
 			if (user.hasTotp) {
-				if (user._strategy === 'totp') {
+				if ((<any>user)._strategy === 'totp') {
 					return innerAccess ? innerAccess(args) : true
 				} else {
 					return false
