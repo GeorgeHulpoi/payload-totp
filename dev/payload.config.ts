@@ -39,6 +39,8 @@ export default buildConfig({
 			collection: 'users',
 			forceSetup: process.env.FORCE_SETUP === '1',
 			disableAccessWrapper: process.env.DISABLE_ACCESS_WRAPPER === '1',
+			forceWhiteBackgroundOnQrCode:
+				process.env.FORCE_WHITE_BACKGROUND_ON_QR_CODE === '1',
 		}),
 	],
 	secret: process.env.PAYLOAD_SECRET || 'test-secret_key',
