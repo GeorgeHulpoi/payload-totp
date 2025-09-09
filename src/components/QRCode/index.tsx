@@ -19,5 +19,5 @@ export default async function QRCode({ totp }: Args) {
 		margin: 0,
 	})
 
-	return <img alt="2FA QR Code" className={styles.root} height={196} src={src} width={196} />
+	return <img alt="2FA QR Code" className={styles.root} height={228} src={src} width={228} />
 }
