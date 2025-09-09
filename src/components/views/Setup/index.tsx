@@ -83,7 +83,10 @@ export const TOTPSetup: React.FC<Args> = (args) => {
 				}}
 			></p>
 			<div className={styles.qr}>
-				<QRCode totp={totp} />
+				<QRCode
+					forceWhiteBackgroundOnQrCode={pluginOptions.forceWhiteBackgroundOnQrCode}
+					totp={totp}
+				/>
 				<ShowSecret i18n={i18n} secret={secret.base32} />
 			</div>
 			<div className={styles.code}>

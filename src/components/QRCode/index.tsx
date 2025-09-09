@@ -7,17 +7,21 @@ import { toDataURL } from 'qrcode'
 import styles from './index.module.css'
 
 type Args = {
+	forceWhiteBackgroundOnQrCode?: boolean
 	totp: TOTP
 }
 
-export default async function QRCode({ totp }: Args) {
+export default async function QRCode({ forceWhiteBackgroundOnQrCode, totp }: Args) {
 	const src = await toDataURL(totp.toString(), {
 		color: {
-			dark: '#000',
-			light: '#fff',
+			dark: '#fff',
+			light: '#000',
 		},
 		margin: 0,
 	})
 
-	return <img alt="2FA QR Code" className={styles.root} height={228} src={src} width={228} />
+	const rootClassName =
+		`${styles.root} ${forceWhiteBackgroundOnQrCode ? styles.forceWhiteBackground : ''}`.trim()
+
+	return <img alt="2FA QR Code" className={rootClassName} height={228} src={src} width={228} />
 }

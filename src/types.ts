@@ -6,6 +6,7 @@ export type PayloadTOTPConfig = {
 	disableAccessWrapper?: boolean
 	disabled?: boolean
 	forceSetup?: boolean
+	forceWhiteBackgroundOnQrCode?: boolean
 	totp?: Partial<Pick<TOTP, 'algorithm' | 'digits' | 'issuer' | 'period'>>
 }
 
