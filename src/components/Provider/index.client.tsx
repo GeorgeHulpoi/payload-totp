@@ -18,6 +18,7 @@ type Args = {
 export default function TOTPProviderClient(args: Args) {
 	const { children, forceSetup, setupUrl, verifyUrl } = args
 	const { user } = useAuth<UserWithTotp>()
+	const strategy = (user as any)?._strategy
 	const router = useRouter()
 	const pathname = usePathname()
 
@@ -25,12 +26,18 @@ export default function TOTPProviderClient(args: Args) {
 		if (
 			user &&
 			user.hasTotp &&
-			user._strategy &&
-			!['api-key', 'totp'].includes(user._strategy) &&
+			strategy &&
+			!['api-key', 'totp'].includes(strategy) &&
 			pathname !== verifyUrl
 		) {
 			router.push(`${verifyUrl}?back=${encodeURIComponent(pathname)}`)
-		} else if (user && !user.hasTotp && forceSetup && pathname !== setupUrl && user._strategy !== 'api-key') {
+		} else if (
+			user &&
+			!user.hasTotp &&
+			forceSetup &&
+			pathname !== setupUrl &&
+			strategy !== 'api-key'
+		) {
 			router.push(`${setupUrl}?back=${encodeURIComponent(pathname)}`)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
