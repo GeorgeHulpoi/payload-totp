@@ -6,6 +6,7 @@ import type { FormEvent } from 'react'
 
 import { useCallback, useRef } from 'react'
 
+import { cn } from '../../utilities/cn.js'
 import styles from './index.module.scss'
 
 type Args = {
@@ -249,8 +250,4 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 function focusAndSelectInput(element: HTMLInputElement): void {
 	element.focus()
 	element.select()
-}
-
-function cn(...classNames: (boolean | null | string | undefined)[]) {
-	return classNames.filter(Boolean).join(' ')
 }

@@ -4,6 +4,7 @@ import type { TOTP } from 'otpauth'
 
 import { toDataURL } from 'qrcode'
 
+import { cn } from '../../utilities/cn.js'
 import styles from './index.module.css'
 
 type Args = {
@@ -20,8 +21,13 @@ export default async function QRCode({ forceWhiteBackgroundOnQrCode, totp }: Arg
 		margin: 0,
 	})
 
-	const rootClassName =
-		`${styles.root} ${forceWhiteBackgroundOnQrCode ? styles.forceWhiteBackground : ''}`.trim()
-
-	return <img alt="2FA QR Code" className={rootClassName} height={228} src={src} width={228} />
+	return (
+		<img
+			alt="2FA QR Code"
+			className={cn(styles.root, forceWhiteBackgroundOnQrCode && styles.forceWhiteBackground)}
+			height={228}
+			src={src}
+			width={228}
+		/>
+	)
 }
