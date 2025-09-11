@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 import { test } from './fixtures'
 
 test.describe.configure({ mode: 'parallel' })

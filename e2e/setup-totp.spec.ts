@@ -1,5 +1,5 @@
 import type { I18nOptions } from '@payloadcms/translations'
-import { expect, Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 import { Secret, TOTP } from 'otpauth'
 
 import { type CustomTranslationsObject } from '../src/i18n/types.js'

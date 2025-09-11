@@ -1,4 +1,4 @@
-import { test as base, Page } from '@playwright/test'
+import { test as base, type Page } from '@playwright/test'
 import { spawn } from 'child_process'
 import { mkdir, rm } from 'fs/promises'
 import getPort, { portNumbers } from 'get-port'
@@ -39,6 +39,7 @@ export const test = base.extend<
 				async ({
 					forceSetup,
 					disableAccessWrapper,
+					forceWhiteBackgroundOnQrCode,
 					overrideBaseURL,
 					overridePort,
 					adminRoute = '/admin',
@@ -72,7 +73,13 @@ export const test = base.extend<
 							DATABASE_URI: `${mongod.getUri()}&retryWrites=true`,
 							ADMIN_ROUTE: adminRoute,
 							API_ROUTE: apiRoute,
-							SERVER_URL: serverURL,
+							SERVER_URL:
+								overridePort && serverURL && port === overridePort
+									? serverURL
+									: baseURL,
+							FORCE_WHITE_BACKGROUND_ON_QR_CODE: forceWhiteBackgroundOnQrCode
+								? '1'
+								: undefined,
 						},
 					})
 
