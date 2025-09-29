@@ -55,7 +55,7 @@ const config = buildConfig({
 export default config
 ```
 
-__IMPORTANT__: The plugin overrides all collections, therefore it should be the last plugin in the array, or at least not followed by plugins that add collections/globals.
+__IMPORTANT__: The plugin overrides all collections, therefore it should be the last plugin in the array, or at least not followed by plugins that add collections/globals. Furthermore, the plugin can break the default behavior for non–user-based access. Please read the [Access Wrapper](#access-wrapper) section.
 
 Now, you need to modify the `middleware.ts` or create it if doesn't exist. The middleware will pass the `pathname` as a header. This is necessary because we don't have access to the `pathname` in the server-side component. Without this part, it will create an endless redirect loop.
 
