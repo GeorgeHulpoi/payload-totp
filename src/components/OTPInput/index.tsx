@@ -78,6 +78,12 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 			}
 
 			const target = event.target as HTMLInputElement
+			const isDigitKey = /^\d$/.test(event.key)
+			const isNumericKey =
+				isDigitKey ||
+				event.code?.startsWith('Digit') ||
+				event.code?.startsWith('Numpad') ||
+				event.key === 'Unidentified'
 
 			switch (event.key) {
 				case 'ArrowDown':
@@ -109,19 +115,14 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 					break
 
 				default:
-					if (
-						!(
-							(event.code.startsWith('Digit') || event.code.startsWith('Numpad')) &&
-							Number(event.key) >= 0 &&
-							Number(event.key) <= 9
-						)
-					) {
+					if (!isNumericKey) {
 						event.preventDefault()
 					}
 
-					if (target.value.length >= 1) {
+					if (isDigitKey && target.value.length >= 1) {
 						event.preventDefault()
 						target.value = event.key
+						updateInputValue()
 						moveToNext(index)
 					}
 
@@ -198,6 +199,7 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 			{/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
 			<input
 				autoComplete="one-time-code"
+				inputMode="numeric"
 				name={name}
 				onInput={(e) => onHiddenInput(e)}
 				ref={hiddenInput}
@@ -222,6 +224,7 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 						// https://developer.1password.com/docs/web/compatible-website-design
 						data-1p-ignore={true}
 						disabled={disabled}
+						inputMode="numeric"
 						key={i}
 						maxLength={1}
 						onInput={(e) => onInput(e, i)}
