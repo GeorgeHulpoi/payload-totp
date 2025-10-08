@@ -30,7 +30,6 @@ const payloadTotp =
 						},
 					],
 					views: {
-						...(config.admin?.components?.views || {}),
 						// Backslash versions are standard and works in general.
 						// But it doesn't work well when you're using PayloadCMS
 						// without `/admin`, but `/`.
@@ -42,7 +41,7 @@ const payloadTotp =
 								},
 							},
 							exact: true,
-							path: 'setup-totp',
+							path: '/setup-totp',
 							sensitive: false,
 							strict: true,
 						},
@@ -66,7 +65,7 @@ const payloadTotp =
 								},
 							},
 							exact: true,
-							path: 'verify-totp',
+							path: '/verify-totp',
 							sensitive: false,
 							strict: true,
 						},
@@ -82,6 +81,9 @@ const payloadTotp =
 							sensitive: false,
 							strict: true,
 						},
+						// Fix for https://github.com/GeorgeHulpoi/payload-totp/issues/46
+						// The order is important!
+						...(config.admin?.components?.views || {}),
 					},
 				},
 			},

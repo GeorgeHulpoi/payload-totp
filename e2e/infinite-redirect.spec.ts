@@ -1,5 +1,5 @@
 import type { I18nOptions } from '@payloadcms/translations'
-import { Page, expect } from '@playwright/test'
+import { type Page, expect } from '@playwright/test'
 
 import { i18n as i18nFn } from '../src/i18n/index.js'
 import { type CustomTranslationsObject } from '../src/i18n/types.js'

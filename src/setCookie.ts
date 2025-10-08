@@ -12,7 +12,7 @@ type Args = {
 export async function setCookie({ authConfig, cookiePrefix, secret, user }: Args) {
 	const token = jwt.sign(
 		{
-			originalStrategy: user._strategy,
+			originalStrategy: (<any>user)._strategy,
 			userId: user.id,
 		},
 		secret,

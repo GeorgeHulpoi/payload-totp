@@ -2,6 +2,13 @@
 	filter: invert(1);
 }
 
+:global(html[data-theme='dark']) .forceWhiteBackground {
+	background: #000;
+	filter: invert(1);
+}
+
 .root {
 	user-select: none;
+	padding: 16px;
+	border-radius: 6px;
 }
