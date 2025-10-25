@@ -1,6 +1,6 @@
 {
 	"name": "payload-totp",
-	"version": "3.0.0-beta.4",
+	"version": "3.0.0-beta.5",
 	"description": "Add an extra security layer to PayloadCMS using a Time-based One-time Password (TOTP).",
 	"license": "MIT",
 	"type": "module",
