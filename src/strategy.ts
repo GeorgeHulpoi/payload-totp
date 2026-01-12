@@ -3,6 +3,8 @@ import type { AuthStrategy } from 'payload'
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers.js'
 
+import type { TotpTokenPayload } from './types.js'
+
 export const strategy: AuthStrategy = {
 	name: 'totp',
 	authenticate: async (args) => {
@@ -16,14 +18,11 @@ export const strategy: AuthStrategy = {
 			}
 		}
 
-		let userId: string
+		let userId: number | string
 		let originalStrategyName: string
 
 		try {
-			const result = jwt.verify(token.value, payload.secret) as {
-				originalStrategy: string
-				userId: string
-			}
+			const result = jwt.verify(token.value, payload.secret) as TotpTokenPayload
 
 			userId = result.userId
 			originalStrategyName = result.originalStrategy

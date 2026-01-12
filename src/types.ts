@@ -13,3 +13,8 @@ export type PayloadTOTPConfig = {
 export type UserWithTotp = {
 	hasTotp: boolean
 } & TypedUser
+
+export type TotpTokenPayload = {
+	originalStrategy: string
+	userId: number | string
+}

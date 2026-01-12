@@ -2,19 +2,28 @@ import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers.js'
 import { getCookieExpiration, type IncomingAuthType, type User } from 'payload'
 
+import type { TotpTokenPayload } from './types.js'
+
 type Args = {
 	authConfig: Omit<IncomingAuthType, 'cookies'> & Required<Pick<IncomingAuthType, 'cookies'>>
 	cookiePrefix: string
+	originalStrategy?: string
 	secret: string
 	user: User
 }
 
-export async function setCookie({ authConfig, cookiePrefix, secret, user }: Args) {
+export async function setCookie({
+	authConfig,
+	cookiePrefix,
+	originalStrategy,
+	secret,
+	user,
+}: Args) {
 	const token = jwt.sign(
 		{
-			originalStrategy: (<any>user)._strategy,
+			originalStrategy: originalStrategy ?? (<any>user)._strategy,
 			userId: user.id,
-		},
+		} satisfies TotpTokenPayload,
 		secret,
 		{
 			expiresIn: authConfig.tokenExpiration || 7200,
