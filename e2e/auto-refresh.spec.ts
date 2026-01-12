@@ -56,6 +56,8 @@ test.describe('auto refresh', () => {
 
 			const meResponse = await page.request.get(`${baseURL}/api/users/me`)
 			expect(meResponse.ok()).toBeTruthy()
+			const meData = await meResponse.json()
+			expect(meData.user).toBeTruthy()
 		})
 	})
 
@@ -89,7 +91,9 @@ test.describe('auto refresh', () => {
 			await page.waitForTimeout((tokenExpirationSeconds + 1) * 1000)
 
 			const meResponse = await page.request.get(`${baseURL}/api/users/me`)
-			expect(meResponse.ok()).toBeFalsy()
+			expect(meResponse.ok()).toBeTruthy()
+			const meData = await meResponse.json()
+			expect(meData.user).toBeNull()
 
 			await page.goto(`${baseURL}/admin`)
 			await expect(page.getByLabel('Email')).toBeVisible()
