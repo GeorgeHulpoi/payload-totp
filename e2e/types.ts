@@ -7,6 +7,7 @@ export interface ISetupArgs {
 	adminRoute?: string
 	apiRoute?: string
 	serverURL?: string
+	tokenExpiration?: number
 }
 
 export type ISetupResult = Promise<{

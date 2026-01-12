@@ -45,6 +45,7 @@ export const test = base.extend<
 					adminRoute = '/admin',
 					apiRoute = '/api',
 					serverURL = '',
+					tokenExpiration,
 				}: ISetupArgs = {}) => {
 					const port = overridePort || (await getPort({ port: portNumbers(3000, 3099) }))
 					const dbName = `payload-totp-${uuidv4()}`
@@ -77,6 +78,10 @@ export const test = base.extend<
 								overridePort && serverURL && port === overridePort
 									? serverURL
 									: baseURL,
+							TOKEN_EXPIRATION:
+								typeof tokenExpiration === 'number'
+									? tokenExpiration.toString()
+									: undefined,
 							FORCE_WHITE_BACKGROUND_ON_QR_CODE: forceWhiteBackgroundOnQrCode
 								? '1'
 								: undefined,
