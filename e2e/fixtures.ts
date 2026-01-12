@@ -144,7 +144,8 @@ export const test = base.extend<
 			}) => {
 				await page.goto(`${baseURL}${adminRoute}/setup-totp?back=${encodeURI(back)}`)
 				await page.getByRole('button', { name: 'Add code manually' }).click()
-				const totpSecret = await page.getByRole('code').textContent()
+				const rawSecret = await page.getByRole('code').textContent()
+				const totpSecret = rawSecret?.replace(/\s/g, '') ?? ''
 
 				const totp = new TOTP({
 					algorithm: 'SHA1',
@@ -152,7 +153,7 @@ export const test = base.extend<
 					issuer: 'Payload',
 					label: 'human@domain.com',
 					period: 30,
-					secret: Secret.fromBase32(totpSecret || ''),
+					secret: Secret.fromBase32(totpSecret),
 				})
 
 				const token = totp.generate()
@@ -163,7 +164,7 @@ export const test = base.extend<
 					.pressSequentially(token, { delay: 300 })
 				await page.waitForURL(`${baseURL}${back}`)
 
-				return { totpSecret: totpSecret || '' }
+				return { totpSecret }
 			},
 		})
 	},
