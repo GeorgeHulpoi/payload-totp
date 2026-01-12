@@ -4,7 +4,7 @@ import { test } from './fixtures'
 
 test.describe.configure({ mode: 'serial' })
 
-const tokenExpirationSeconds = 4
+const tokenExpirationSeconds = 5
 
 test.describe('auto refresh', () => {
 	test.describe('refresh keeps TOTP session alive', () => {
@@ -51,7 +51,7 @@ test.describe('auto refresh', () => {
 			expect(totpCookieAfter!.expires).toBeGreaterThan(previousExpiresAt)
 
 			const nowSeconds = Date.now() / 1000
-			const waitSeconds = Math.max(previousExpiresAt - nowSeconds + 1, 0)
+			const waitSeconds = Math.max(previousExpiresAt + 1 - nowSeconds, 0)
 			await page.waitForTimeout(waitSeconds * 1000)
 
 			const meResponse = await page.request.get(`${baseURL}/api/users/me`)
