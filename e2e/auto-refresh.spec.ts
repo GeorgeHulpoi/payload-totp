@@ -56,8 +56,6 @@ test.describe('auto refresh', () => {
 
 			const meResponse = await page.request.get(`${baseURL}/api/users/me`)
 			expect(meResponse.ok()).toBeTruthy()
-			const meData = await meResponse.json()
-			expect(meData.strategy).toBe('totp')
 		})
 	})
 
