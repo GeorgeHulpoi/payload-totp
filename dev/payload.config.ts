@@ -19,6 +19,7 @@ if (!process.env.ROOT_DIR) {
 // eslint-disable-next-line no-restricted-exports
 export default buildConfig({
 	admin: {
+		autoRefresh: true,
 		importMap: {
 			baseDir: path.resolve(dirname),
 		},
