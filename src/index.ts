@@ -6,6 +6,7 @@ import { removeEndpointHandler } from './api/remove.js'
 import { setSecret } from './api/setSecret.js'
 import { verifyToken } from './api/verifyToken.js'
 import { deleteCookieAfterLogout } from './hooks/deleteCookieAfterLogout.js'
+import { refreshTotpCookieAfterRefresh } from './hooks/refreshTotpCookieAfterRefresh.js'
 import { setHasTotp } from './hooks/setHasTotp.js'
 import { i18n } from './i18n/index.js'
 import { strategy } from './strategy.js'
@@ -193,6 +194,10 @@ const payloadTotp =
 								afterLogout: [
 									...(collection.hooks?.afterLogout || []),
 									deleteCookieAfterLogout,
+								],
+								afterRefresh: [
+									...(collection.hooks?.afterRefresh || []),
+									refreshTotpCookieAfterRefresh,
 								],
 							},
 						}

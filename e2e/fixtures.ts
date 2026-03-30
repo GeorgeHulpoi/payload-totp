@@ -40,11 +40,13 @@ export const test = base.extend<
 					forceSetup,
 					disableAccessWrapper,
 					forceWhiteBackgroundOnQrCode,
+					autoRefresh,
 					overrideBaseURL,
 					overridePort,
 					adminRoute = '/admin',
 					apiRoute = '/api',
 					serverURL = '',
+					tokenExpiration,
 				}: ISetupArgs = {}) => {
 					const port = overridePort || (await getPort({ port: portNumbers(3000, 3099) }))
 					const dbName = `payload-totp-${uuidv4()}`
@@ -73,10 +75,15 @@ export const test = base.extend<
 							DATABASE_URI: `${mongod.getUri()}&retryWrites=true`,
 							ADMIN_ROUTE: adminRoute,
 							API_ROUTE: apiRoute,
+							AUTO_REFRESH: autoRefresh ? '1' : undefined,
 							SERVER_URL:
 								overridePort && serverURL && port === overridePort
 									? serverURL
 									: baseURL,
+							TOKEN_EXPIRATION:
+								typeof tokenExpiration === 'number'
+									? tokenExpiration.toString()
+									: undefined,
 							FORCE_WHITE_BACKGROUND_ON_QR_CODE: forceWhiteBackgroundOnQrCode
 								? '1'
 								: undefined,
@@ -139,7 +146,8 @@ export const test = base.extend<
 			}) => {
 				await page.goto(`${baseURL}${adminRoute}/setup-totp?back=${encodeURI(back)}`)
 				await page.getByRole('button', { name: 'Add code manually' }).click()
-				const totpSecret = await page.getByRole('code').textContent()
+				const rawSecret = await page.getByRole('code').textContent()
+				const totpSecret = rawSecret?.replace(/\s/g, '') ?? ''
 
 				const totp = new TOTP({
 					algorithm: 'SHA1',
@@ -147,7 +155,7 @@ export const test = base.extend<
 					issuer: 'Payload',
 					label: 'human@domain.com',
 					period: 30,
-					secret: Secret.fromBase32(totpSecret || ''),
+					secret: Secret.fromBase32(totpSecret),
 				})
 
 				const token = totp.generate()
@@ -158,7 +166,7 @@ export const test = base.extend<
 					.pressSequentially(token, { delay: 300 })
 				await page.waitForURL(`${baseURL}${back}`)
 
-				return { totpSecret: totpSecret || '' }
+				return { totpSecret }
 			},
 		})
 	},
