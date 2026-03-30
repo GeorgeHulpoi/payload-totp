@@ -4,7 +4,6 @@ import type { I18nClient } from '@payloadcms/translations'
 import type { BasePayload } from 'payload'
 
 import { Button } from '@payloadcms/ui'
-import Link from 'next/link.js'
 import { formatAdminURL } from 'payload/shared'
 
 import type { CustomTranslationsKeys, CustomTranslationsObject } from '../../i18n/types.js'
@@ -30,7 +29,6 @@ export default function Setup({ backUrl, i18n, payload }: Args) {
 		<Button
 			buttonStyle="secondary"
 			el="link"
-			Link={Link as unknown as React.ElementType}
 			size="small"
 			url={url}
 		>
