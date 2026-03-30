@@ -16,10 +16,16 @@ if (!process.env.ROOT_DIR) {
 	process.env.ROOT_DIR = dirname
 }
 
+const autoRefresh = process.env.AUTO_REFRESH
+
 // eslint-disable-next-line no-restricted-exports
 export default buildConfig({
 	admin: {
-		autoRefresh: true,
+		...(typeof autoRefresh === 'string'
+			? {
+					autoRefresh: autoRefresh === '1',
+				}
+			: {}),
 		importMap: {
 			baseDir: path.resolve(dirname),
 		},

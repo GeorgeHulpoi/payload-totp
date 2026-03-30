@@ -7,13 +7,14 @@ test.describe.configure({ mode: 'serial' })
 const tokenExpirationSeconds = 5
 
 test.describe('auto refresh', () => {
-	test.describe('refresh keeps TOTP session alive', () => {
+	test.describe('when autoRefresh is enabled', () => {
 		let page: Page
 		let teardown: VoidFunction
 		let baseURL: string
 
 		test.beforeAll(async ({ setup, browser, helpers }) => {
 			const setupResult = await setup({
+				autoRefresh: true,
 				forceSetup: true,
 				tokenExpiration: tokenExpirationSeconds,
 			})
@@ -63,13 +64,14 @@ test.describe('auto refresh', () => {
 		})
 	})
 
-	test.describe('leaving admin expires the session', () => {
+	test.describe('when autoRefresh is disabled', () => {
 		let page: Page
 		let teardown: VoidFunction
 		let baseURL: string
 
 		test.beforeAll(async ({ setup, browser, helpers }) => {
 			const setupResult = await setup({
+				autoRefresh: false,
 				forceSetup: true,
 				tokenExpiration: tokenExpirationSeconds,
 			})

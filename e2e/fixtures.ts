@@ -40,6 +40,7 @@ export const test = base.extend<
 					forceSetup,
 					disableAccessWrapper,
 					forceWhiteBackgroundOnQrCode,
+					autoRefresh,
 					overrideBaseURL,
 					overridePort,
 					adminRoute = '/admin',
@@ -74,6 +75,7 @@ export const test = base.extend<
 							DATABASE_URI: `${mongod.getUri()}&retryWrites=true`,
 							ADMIN_ROUTE: adminRoute,
 							API_ROUTE: apiRoute,
+							AUTO_REFRESH: autoRefresh ? '1' : undefined,
 							SERVER_URL:
 								overridePort && serverURL && port === overridePort
 									? serverURL
