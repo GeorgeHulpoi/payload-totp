@@ -36,6 +36,7 @@ test.describe('auto refresh', () => {
 			const cookiesBefore = await page.context().cookies()
 			const totpCookieBefore = cookiesBefore.find((cookie) => cookie.name === 'payload-totp')
 			expect(totpCookieBefore).toBeDefined()
+			const previousToken = totpCookieBefore!.value
 			const previousExpiresAt = totpCookieBefore!.expires
 
 			await page.waitForTimeout(1000)
@@ -48,6 +49,7 @@ test.describe('auto refresh', () => {
 			const cookiesAfter = await page.context().cookies()
 			const totpCookieAfter = cookiesAfter.find((cookie) => cookie.name === 'payload-totp')
 			expect(totpCookieAfter).toBeDefined()
+			expect(totpCookieAfter!.value).not.toBe(previousToken)
 			expect(totpCookieAfter!.expires).toBeGreaterThan(previousExpiresAt)
 
 			const nowSeconds = Date.now() / 1000
