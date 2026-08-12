@@ -5,8 +5,10 @@ import { cookies } from 'next/headers.js'
 
 import type { TotpTokenPayload } from './types.js'
 
+import { TOTP_STRATEGY_NAME } from './constants.js'
+
 export const strategy: AuthStrategy = {
-	name: 'totp',
+	name: TOTP_STRATEGY_NAME,
 	authenticate: async (args) => {
 		const { payload } = args
 		const cookieStore = await cookies()
@@ -26,9 +28,21 @@ export const strategy: AuthStrategy = {
 
 			userId = result.userId
 			originalStrategyName = result.originalStrategy
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (err) {
-			// TODO: Log it
+			payload.logger.warn({ err }, 'Rejecting TOTP cookie: token could not be verified.')
+
+			return {
+				user: null,
+			}
+		}
+
+		// A cookie naming this strategy would make it delegate to itself with the same
+		// args, without a termination condition, until the heap is exhausted.
+		if (originalStrategyName === TOTP_STRATEGY_NAME) {
+			payload.logger.warn(
+				`Rejecting TOTP cookie: it names "${TOTP_STRATEGY_NAME}" as its original strategy, which would recurse until the heap is exhausted.`,
+			)
+
 			return {
 				user: null,
 			}

@@ -1,11 +1,7 @@
 import type { CollectionAfterRefreshHook } from 'payload'
 
-import jwt, { type JwtPayload } from 'jsonwebtoken'
-import { cookies } from 'next/headers.js'
-
-import type { TotpTokenPayload } from '../types.js'
-
 import { setCookie } from '../setCookie.js'
+import { readTotpCookie } from '../utilities/readTotpCookie.js'
 
 export const refreshTotpCookieAfterRefresh: CollectionAfterRefreshHook = async ({
 	collection,
@@ -17,38 +13,17 @@ export const refreshTotpCookieAfterRefresh: CollectionAfterRefreshHook = async (
 		return
 	}
 
-	const cookiePrefix = req.payload.config.cookiePrefix
-	const cookieStore = await cookies()
-	const totpCookie = cookieStore.get(`${cookiePrefix}-totp`)
+	// Only an existing, trustworthy cookie is refreshed. Writing one here for a user
+	// who never verified would grant TOTP-verified status without verification.
+	const decoded = await readTotpCookie({ payload: req.payload, user })
 
-	if (!totpCookie?.value) {
-		return
-	}
-
-	let decoded: JwtPayload & Partial<TotpTokenPayload>
-
-	try {
-		decoded = jwt.verify(totpCookie.value, req.payload.secret) as JwtPayload &
-			Partial<TotpTokenPayload>
-	} catch {
-		return
-	}
-
-	if (typeof decoded.userId !== 'string' && typeof decoded.userId !== 'number') {
-		return
-	}
-
-	if (String(decoded.userId) !== String(user.id)) {
-		return
-	}
-
-	if (!decoded.originalStrategy || decoded.originalStrategy === 'totp') {
+	if (!decoded) {
 		return
 	}
 
 	await setCookie({
 		authConfig: collection.auth,
-		cookiePrefix,
+		cookiePrefix: req.payload.config.cookiePrefix,
 		originalStrategy: decoded.originalStrategy,
 		secret: req.payload.secret,
 		user,

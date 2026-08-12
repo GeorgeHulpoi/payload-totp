@@ -8,6 +8,7 @@ import type { PayloadTOTPConfig, UserWithTotp } from '../types.js'
 
 import { setCookie } from '../setCookie.js'
 import { getTotpSecret } from '../utilities/getTotpSecret.js'
+import { resolveOriginalStrategy } from '../utilities/resolveOriginalStrategy.js'
 
 export function verifyToken(pluginOptions: PayloadTOTPConfig) {
 	const handler: PayloadHandler = async (req) => {
@@ -68,6 +69,7 @@ export function verifyToken(pluginOptions: PayloadTOTPConfig) {
 		await setCookie({
 			authConfig: collection.config.auth,
 			cookiePrefix: payload.config.cookiePrefix,
+			originalStrategy: await resolveOriginalStrategy({ payload, user }),
 			secret: payload.secret,
 			user,
 		})
