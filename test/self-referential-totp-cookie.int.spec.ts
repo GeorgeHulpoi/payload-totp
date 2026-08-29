@@ -18,6 +18,10 @@ const cookieStore = {
 	set: jest.fn(),
 }
 
+const logger = {
+	warn: jest.fn(),
+}
+
 jest.mock('next/headers.js', () => ({
 	cookies: async () => cookieStore,
 }))
@@ -79,6 +83,7 @@ function buildArgs(authStrategies: AuthStrategy[]) {
 		payload: {
 			authStrategies,
 			config: { cookiePrefix: COOKIE_PREFIX },
+			logger,
 			secret: SECRET,
 		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,6 +93,7 @@ function buildArgs(authStrategies: AuthStrategy[]) {
 beforeEach(() => {
 	cookieStore.get.mockReset()
 	cookieStore.set.mockReset()
+	logger.warn.mockReset()
 })
 
 describe('TOTP strategy', () => {
@@ -99,6 +105,9 @@ describe('TOTP strategy', () => {
 
 		expect(state.reentries).toBe(0)
 		expect(result.user).toBeNull()
+		expect(logger.warn).toHaveBeenCalledWith(
+			expect.stringContaining('names "totp" as its original strategy'),
+		)
 	})
 
 	test('still delegates to the original strategy for a healthy cookie', async () => {
