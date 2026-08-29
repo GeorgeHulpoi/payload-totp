@@ -7,6 +7,7 @@ import type { CustomTranslationsKeys, CustomTranslationsObject } from '../i18n/t
 import type { PayloadTOTPConfig, UserWithTotp } from '../types.js'
 
 import { setCookie } from '../setCookie.js'
+import { resolveOriginalStrategy } from '../utilities/resolveOriginalStrategy.js'
 
 export function setSecret(pluginOptions: PayloadTOTPConfig) {
 	const handler: PayloadHandler = async (req) => {
@@ -76,6 +77,7 @@ export function setSecret(pluginOptions: PayloadTOTPConfig) {
 		await setCookie({
 			authConfig: collection.config.auth,
 			cookiePrefix: payload.config.cookiePrefix,
+			originalStrategy: await resolveOriginalStrategy({ payload, user }),
 			secret: payload.secret,
 			user,
 		})

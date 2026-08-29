@@ -4,6 +4,8 @@ import { getCookieExpiration, type IncomingAuthType, type User } from 'payload'
 
 import type { TotpTokenPayload } from './types.js'
 
+import { TOTP_STRATEGY_NAME } from './constants.js'
+
 type Args = {
 	authConfig: Omit<IncomingAuthType, 'cookies'> & Required<Pick<IncomingAuthType, 'cookies'>>
 	cookiePrefix: string
@@ -19,9 +21,18 @@ export async function setCookie({
 	secret,
 	user,
 }: Args) {
+	const originalStrategyName = originalStrategy ?? (<any>user)._strategy
+
+	// Both cases would produce a cookie that cannot authenticate anyone: the TOTP
+	// strategy would either delegate to itself without a termination condition, or
+	// find no strategy at all. Leave the cookie alone and let the user verify again.
+	if (!originalStrategyName || originalStrategyName === TOTP_STRATEGY_NAME) {
+		return
+	}
+
 	const token = jwt.sign(
 		{
-			originalStrategy: originalStrategy ?? (<any>user)._strategy,
+			originalStrategy: originalStrategyName,
 			userId: user.id,
 		} satisfies TotpTokenPayload,
 		secret,

@@ -15,6 +15,12 @@ import { logout } from './helpers/logout'
 import { promptTotp } from './helpers/prompt-totp'
 import type { ISetupArgs, ISetupResult } from './types'
 
+// `dev/payload.config.ts` reads PAYLOAD_SECRET, falling back to its own default.
+// `dev/.env` is gitignored, so a developer's local value is absent on CI and the
+// two runs would disagree. Pinning it here makes the secret the same everywhere,
+// which specs that sign their own cookies depend on.
+export const PAYLOAD_SECRET = 'e2e-payload-secret'
+
 export const test = base.extend<
 	{
 		helpers: {
@@ -69,6 +75,7 @@ export const test = base.extend<
 						env: {
 							...process.env,
 							NODE_ENV: 'production',
+							PAYLOAD_SECRET,
 							PORT: port.toString(),
 							FORCE_SETUP: forceSetup ? '1' : undefined,
 							DISABLE_ACCESS_WRAPPER: disableAccessWrapper ? '1' : undefined,
