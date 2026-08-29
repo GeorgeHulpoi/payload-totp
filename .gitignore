@@ -50,3 +50,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /tmp
+
+# npm auth (written by actions/setup-node at publish time)
+.npmrc

@@ -13,6 +13,16 @@ const esModules = [
   'path-exists',
   'qs-esm',
   'uint8array-extras',
+  // newer file-type chain, pulled in by payload since 3.88
+  '@borewit/text-codec',
+  '@tokenizer/inflate',
+  // ESM-only, reachable from payload's dist entry since 3.88
+  'uuid',
+  'image-dimensions',
+  'http-status',
+  'croner',
+  'date-fns',
+  'get-tsconfig',
   'payload',
   '@payloadcms/next',
   '@payloadcms/ui',
@@ -46,6 +56,12 @@ const customJestConfig = {
     '\\.(css|scss)$': '<rootDir>/helpers/mocks/emptyModule.js',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/helpers/mocks/fileMock.js',
+    // payload 3.88 pulls in file-type@21, whose '.' export offers only `import`
+    // under the `node` condition, so jest's default (node, require, default)
+    // conditions resolve nothing and it reports the package as missing. The
+    // './node' subpath exposes the same entry behind `default`, which resolves
+    // under any condition; the transform allowlist above converts it to CJS.
+    '^file-type$': 'file-type/node',
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 }

@@ -276,11 +276,6 @@ const payloadTotp =
 								global.custom?.totp?.disableAccessWrapper?.read
 									? global.access?.read
 									: totpAccess(global.access?.read),
-							readDrafts:
-								pluginOptions.disableAccessWrapper ||
-								global.custom?.totp?.disableAccessWrapper?.readDrafts
-									? global.access?.readDrafts
-									: totpAccess(global.access?.readDrafts),
 							readVersions:
 								pluginOptions.disableAccessWrapper ||
 								global.custom?.totp?.disableAccessWrapper?.readVersions
