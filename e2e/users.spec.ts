@@ -133,8 +133,11 @@ test.describe('users', () => {
 			})
 
 			test('should not see other user private fields', async () => {
+				// The two test users are created concurrently, so which one the list
+				// sorts first is a race. Match the row by its email rather than by
+				// position, which would leave the test dependent on that race.
 				const anchor = page
-					.locator('css=.row-1')
+					.locator('css=.table tbody tr')
 					.filter({ hasText: 'test1@domain.com' })
 					.locator('a')
 				await anchor.click()

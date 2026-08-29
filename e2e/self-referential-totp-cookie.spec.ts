@@ -2,15 +2,18 @@ import { expect, type Page } from '@playwright/test'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 
-import { test } from './fixtures'
+import { PAYLOAD_SECRET, test } from './fixtures'
 
 test.describe.configure({ mode: 'serial' })
 
-// `dev/.env` sets PAYLOAD_SECRET=secret, and `e2e/fixtures.ts` does not override it.
-// Payload does not sign with that value directly — it derives `payload.secret` from
-// it, so a cookie signed with the raw value would be rejected as malformed and this
-// test would pass without ever exercising the self-reference guard.
-const PAYLOAD_SECRET = crypto.createHash('sha256').update('secret').digest('hex').slice(0, 32)
+// Payload does not sign with PAYLOAD_SECRET directly — it derives `payload.secret`
+// from it. A cookie signed with the raw value would be rejected as malformed, and
+// this test would pass without ever exercising the self-reference guard.
+const SIGNING_SECRET = crypto
+	.createHash('sha256')
+	.update(PAYLOAD_SECRET)
+	.digest('hex')
+	.slice(0, 32)
 
 test.describe('self-referential totp cookie', () => {
 	let page: Page
@@ -49,7 +52,7 @@ test.describe('self-referential totp cookie', () => {
 			{
 				name: 'payload-totp',
 				url: baseURL,
-				value: jwt.sign({ originalStrategy: 'totp', userId }, PAYLOAD_SECRET, {
+				value: jwt.sign({ originalStrategy: 'totp', userId }, SIGNING_SECRET, {
 					expiresIn: 7200,
 				}),
 			},
@@ -74,7 +77,7 @@ test.describe('self-referential totp cookie', () => {
 		)
 		expect(totpCookie).toBeDefined()
 
-		const decoded = jwt.verify(totpCookie!.value, PAYLOAD_SECRET) as {
+		const decoded = jwt.verify(totpCookie!.value, SIGNING_SECRET) as {
 			originalStrategy: string
 		}
 		expect(decoded.originalStrategy).not.toBe('totp')
