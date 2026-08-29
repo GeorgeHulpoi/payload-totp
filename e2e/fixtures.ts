@@ -83,10 +83,17 @@ export const test = base.extend<
 							ADMIN_ROUTE: adminRoute,
 							API_ROUTE: apiRoute,
 							AUTO_REFRESH: autoRefresh ? '1' : undefined,
+							// Payload appends `serverURL` to `config.csrf`, and since 3.80
+							// a non-empty csrf allowlist makes cookie auth reject any request
+							// that sends neither `Origin` nor a same-origin `Sec-Fetch-Site`.
+							// Playwright's `page.request` is a Node HTTP client that sends
+							// neither, so leaving `serverURL` unset keeps Payload's default
+							// posture and lets the specs authenticate over cookies. Specs that
+							// need an explicit serverURL still pass one, and make no API calls.
 							SERVER_URL:
 								overridePort && serverURL && port === overridePort
 									? serverURL
-									: baseURL,
+									: undefined,
 							TOKEN_EXPIRATION:
 								typeof tokenExpiration === 'number'
 									? tokenExpiration.toString()

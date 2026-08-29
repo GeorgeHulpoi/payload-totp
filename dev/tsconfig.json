@@ -1,6 +1,12 @@
 {
 	"extends": "../tsconfig.json",
-	"exclude": [],
+	// Next 16 writes `.next/package.json` with `{"type":"commonjs"}`, so the root
+	// tsconfig's `nodenext` resolution treats Next's generated route validator as a
+	// CJS module importing ESM page files and fails with TS1542. Turbopack needs
+	// `nodenext` here to map the plugin's `.js` import specifiers onto `../src/*.ts`,
+	// so the generated types are skipped instead. Dev-harness only; the published
+	// plugin types are still built from the root tsconfig.
+	"exclude": [".next/types/**/*.ts"],
 	"include": [
 		"**/*.ts",
 		"**/*.tsx",
