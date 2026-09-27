@@ -20,7 +20,7 @@ type Args = {
 export default function TOTPProviderClient(args: Args) {
 	const { children, forceSetup, setupUrl, verifyUrl } = args
 	const { user } = useAuth<UserWithTotp>()
-	const strategy = (user as any)?._strategy
+	const strategy = user?._strategy
 	const router = useRouter()
 	const pathname = usePathname()
 	const normalizedPathname = normalizePathname(pathname)
