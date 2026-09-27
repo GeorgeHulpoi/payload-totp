@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers.js'
-import { getCookieExpiration, type IncomingAuthType, type TypedUser } from 'payload'
+import { getCookieExpiration, type IncomingAuthType } from 'payload'
 
-import type { TotpTokenPayload } from './types.js'
+import type { AuthenticatedUser, TotpTokenPayload } from './types.js'
 
 import { TOTP_STRATEGY_NAME } from './constants.js'
 
@@ -11,7 +11,7 @@ type Args = {
 	cookiePrefix: string
 	originalStrategy?: string
 	secret: string
-	user: TypedUser
+	user: AuthenticatedUser
 }
 
 export async function setCookie({
@@ -21,7 +21,7 @@ export async function setCookie({
 	secret,
 	user,
 }: Args) {
-	const originalStrategyName = originalStrategy ?? (<any>user)._strategy
+	const originalStrategyName = originalStrategy ?? user._strategy
 
 	// Both cases would produce a cookie that cannot authenticate anyone: the TOTP
 	// strategy would either delegate to itself without a termination condition, or
