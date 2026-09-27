@@ -1,4 +1,4 @@
-import type { FieldHook, User } from 'payload'
+import type { FieldHook, TypedUser } from 'payload'
 
 import type { PayloadTOTPConfig } from '../types.js'
 
@@ -10,7 +10,7 @@ export const setHasTotp: (pluginOptions: PayloadTOTPConfig) => FieldHook =
 		const totpSecret = await getTotpSecret({
 			collection: collection?.slug || pluginOptions.collection,
 			payload,
-			user: data as User,
+			user: data as TypedUser,
 		})
 
 		return Boolean(totpSecret)

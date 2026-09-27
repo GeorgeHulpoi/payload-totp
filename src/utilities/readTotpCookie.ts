@@ -1,4 +1,4 @@
-import type { Payload, User } from 'payload'
+import type { Payload, TypedUser } from 'payload'
 
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers.js'
@@ -9,7 +9,7 @@ import { TOTP_STRATEGY_NAME } from '../constants.js'
 
 type Args = {
 	payload: Payload
-	user: User
+	user: TypedUser
 }
 
 /**
