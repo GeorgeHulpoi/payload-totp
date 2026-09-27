@@ -1,11 +1,11 @@
-import type { Payload, User } from 'payload'
+import type { Payload, TypedUser } from 'payload'
 
 import { TOTP_STRATEGY_NAME } from '../constants.js'
 import { readTotpCookie } from './readTotpCookie.js'
 
 type Args = {
 	payload: Payload
-	user: User
+	user: TypedUser
 }
 
 /**

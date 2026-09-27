@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers.js'
-import { getCookieExpiration, type IncomingAuthType, type User } from 'payload'
+import { getCookieExpiration, type IncomingAuthType, type TypedUser } from 'payload'
 
 import type { TotpTokenPayload } from './types.js'
 
@@ -11,7 +11,7 @@ type Args = {
 	cookiePrefix: string
 	originalStrategy?: string
 	secret: string
-	user: User
+	user: TypedUser
 }
 
 export async function setCookie({
