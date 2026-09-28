@@ -2,10 +2,12 @@ import type { Payload, PayloadRequest, SanitizedCollectionConfig, TypedUser } fr
 
 import { incrementLoginAttempts, resetLoginAttempts } from 'payload'
 
+// `Record`: Payload's reset takes an indexable document, which a generated `User` type is not.
 type Account = {
 	lockUntil?: null | string
 	loginAttempts?: null | number
-} & TypedUser
+} & Record<string, unknown> &
+	TypedUser
 
 type Args = {
 	collection: SanitizedCollectionConfig
