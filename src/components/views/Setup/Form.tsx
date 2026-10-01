@@ -7,9 +7,11 @@ import React, { useCallback, useRef, useState } from 'react'
 
 import type { IResponse } from '../../../api/setSecret.js'
 
+import { getSafeBackURL } from '../../../utilities/getSafeBackURL.js'
 import OTPInput from '../../OTPInput/index.js'
 
 type Args = {
+	adminRoute: string
 	apiRoute: string
 	back?: string
 	length?: number
@@ -17,7 +19,7 @@ type Args = {
 	serverURL: string
 }
 
-export default function OTPForm({ apiRoute, back, length, secret, serverURL }: Args) {
+export default function OTPForm({ adminRoute, apiRoute, back, length, secret, serverURL }: Args) {
 	const [isPending, setIsPending] = useState(false)
 	const form = useRef<HTMLFormElement>(null)
 
@@ -62,11 +64,10 @@ export default function OTPForm({ apiRoute, back, length, secret, serverURL }: A
 			asyncOperation(event)
 				.then((ok) => {
 					if (ok) {
-						if (back) {
-							location.replace(back)
-						} else {
-							window.history.back()
-						}
+						// Use location, auth strategy must run again
+						location.replace(
+							getSafeBackURL({ adminRoute, back, origin: window.location.origin }),
+						)
 					}
 					setIsPending(false)
 				})
@@ -77,7 +78,7 @@ export default function OTPForm({ apiRoute, back, length, secret, serverURL }: A
 					setIsPending(false)
 				})
 		},
-		[back, asyncOperation],
+		[adminRoute, back, asyncOperation],
 	)
 
 	return (

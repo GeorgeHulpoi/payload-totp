@@ -1,4 +1,12 @@
-import type { CheckboxField, Config, TextField, UIField } from 'payload'
+import type {
+	Access,
+	CheckboxField,
+	CollectionConfig,
+	Config,
+	Payload,
+	TextField,
+	UIField,
+} from 'payload'
 
 import type { PayloadTOTPConfig } from './types.js'
 
@@ -10,7 +18,96 @@ import { refreshTotpCookieAfterRefresh } from './hooks/refreshTotpCookieAfterRef
 import { setHasTotp } from './hooks/setHasTotp.js'
 import { i18n } from './i18n/index.js'
 import { strategy } from './strategy.js'
-import { totpAccess } from './totpAccess.js'
+import { totpAccess, type TotpAccessOptions } from './totpAccess.js'
+
+const collectionOperations = [
+	'create',
+	'delete',
+	'read',
+	'readVersions',
+	'unlock',
+	'update',
+] as const
+const globalOperations = ['read', 'readVersions', 'update'] as const
+
+/**
+ * Wraps each of `operations` in `totpAccess`, except those the collection or global opts out
+ * of through `custom.totp.disableAccessWrapper`. Structural, so it takes the incoming configs
+ * in `payloadTotp` and the sanitized ones in `onInit` alike.
+ */
+function wrapAccess<TAccess>(
+	pluginOptions: PayloadTOTPConfig,
+	entity: { access?: TAccess; custom?: CollectionConfig['custom'] },
+	operations: readonly string[],
+	options: Record<string, TotpAccessOptions> = {},
+): TAccess {
+	if (pluginOptions.disableAccessWrapper) {
+		return entity.access as TAccess
+	}
+
+	const access = (entity.access || {}) as Record<string, Access | undefined>
+
+	return {
+		...access,
+		...Object.fromEntries(
+			operations.map((operation) => [
+				operation,
+				entity.custom?.totp?.disableAccessWrapper?.[operation]
+					? access[operation]
+					: totpAccess(access[operation], options[operation]),
+			]),
+		),
+	} as TAccess
+}
+
+const wrappedConfigs = new WeakSet<object>()
+
+/**
+ * Payload appends some collections of its own after every plugin has run, so the wrapping in
+ * `payloadTotp` never sees them. These hold what a session that still owes a code must not
+ * reach: jobs (whose inputs and outputs are stored, and creating one queues it) and the global
+ * their schedules are computed from, folders and saved list filters. Locks can't be written
+ * either, but reading them stays open: the dashboard reads them with access enforced and no
+ * error handling, and it renders right after login, before the redirect to the verify or
+ * setup view lands.
+ *
+ * Collections of plugins listed after this one are left alone; their public access would
+ * break. Payload's dev-mode reload swaps the config without calling `onInit`, so this pass
+ * does not survive it there.
+ */
+function wrapPayloadCollections(payload: Payload, pluginOptions: PayloadTOTPConfig) {
+	const { config } = payload
+
+	if (wrappedConfigs.has(config)) {
+		return
+	}
+
+	wrappedConfigs.add(config)
+
+	const operationsBySlug: Record<string, readonly string[]> = {
+		'payload-jobs': collectionOperations,
+		'payload-locked-documents': collectionOperations.filter((operation) => operation !== 'read'),
+		'payload-query-presets': collectionOperations,
+	}
+
+	if (config.folders) {
+		operationsBySlug[config.folders.slug] = collectionOperations
+	}
+
+	for (const collection of config.collections) {
+		const operations = operationsBySlug[collection.slug]
+
+		if (operations) {
+			collection.access = wrapAccess(pluginOptions, collection, operations)
+		}
+	}
+
+	for (const global of config.globals) {
+		if (global.slug === 'payload-jobs-stats') {
+			global.access = wrapAccess(pluginOptions, global, globalOperations)
+		}
+	}
+}
 
 const payloadTotp =
 	(pluginOptions: PayloadTOTPConfig) =>
@@ -141,39 +238,9 @@ const payloadTotp =
 					if (collection.slug === pluginOptions.collection) {
 						return {
 							...collection,
-							access: {
-								...(collection.access || {}),
-								create:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.create
-										? collection.access?.create
-										: totpAccess(collection.access?.create),
-								delete:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.delete
-										? collection.access?.delete
-										: totpAccess(collection.access?.delete),
-								read:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.read
-										? collection.access?.read
-										: totpAccess(collection.access?.read),
-								readVersions:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.readVersions
-										? collection.access?.readVersions
-										: totpAccess(collection.access?.readVersions),
-								unlock:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.unlock
-										? collection.access?.unlock
-										: totpAccess(collection.access?.unlock),
-								update:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.update
-										? collection.access?.update
-										: totpAccess(collection.access?.update),
-							},
+							access: wrapAccess(pluginOptions, collection, collectionOperations, {
+								read: { allowOwnDocumentDuringSetup: true },
+							}),
 							auth: {
 								...(typeof collection.auth === 'object' ? collection.auth : {}),
 								strategies: [
@@ -235,39 +302,7 @@ const payloadTotp =
 					} else {
 						return {
 							...collection,
-							access: {
-								...(collection.access || {}),
-								create:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.create
-										? collection.access?.create
-										: totpAccess(collection.access?.create),
-								delete:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.delete
-										? collection.access?.delete
-										: totpAccess(collection.access?.delete),
-								read:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.read
-										? collection.access?.read
-										: totpAccess(collection.access?.read),
-								readVersions:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.readVersions
-										? collection.access?.readVersions
-										: totpAccess(collection.access?.readVersions),
-								unlock:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.unlock
-										? collection.access?.unlock
-										: totpAccess(collection.access?.unlock),
-								update:
-									pluginOptions.disableAccessWrapper ||
-									collection.custom?.totp?.disableAccessWrapper?.update
-										? collection.access?.update
-										: totpAccess(collection.access?.update),
-							},
+							access: wrapAccess(pluginOptions, collection, collectionOperations),
 						}
 					}
 				}),
@@ -295,29 +330,18 @@ const payloadTotp =
 				...(config.globals || []).map((global) => {
 					return {
 						...global,
-						access: {
-							...(global.access || {}),
-							read:
-								pluginOptions.disableAccessWrapper ||
-								global.custom?.totp?.disableAccessWrapper?.read
-									? global.access?.read
-									: totpAccess(global.access?.read),
-							readVersions:
-								pluginOptions.disableAccessWrapper ||
-								global.custom?.totp?.disableAccessWrapper?.readVersions
-									? global.access?.readVersions
-									: totpAccess(global.access?.readVersions),
-							update:
-								pluginOptions.disableAccessWrapper ||
-								global.custom?.totp?.disableAccessWrapper?.update
-									? global.access?.update
-									: totpAccess(global.access?.update),
-						},
+						access: wrapAccess(pluginOptions, global, globalOperations),
 					}
 				}),
 			],
 			i18n: i18n(config.i18n),
+			onInit: async (payload) => {
+				wrapPayloadCollections(payload, pluginOptions)
+
+				await config.onInit?.(payload)
+			},
 		}
 	}
 
 export { payloadTotp, totpAccess }
+export type { TotpAccessOptions }

@@ -17,7 +17,9 @@ export function removeEndpointHandler(pluginOptions: PayloadTOTPConfig) {
 			CustomTranslationsKeys
 		>
 
-		if (!user) {
+		// The secret lives on `pluginOptions.collection`, looked up by `user.id`. A user of another
+		// auth collection whose ID matches one there would otherwise act on that user's TOTP.
+		if (!user || user.collection !== pluginOptions.collection) {
 			return Response.json({ message: i18n.t('error:unauthorized'), ok: false })
 		}
 

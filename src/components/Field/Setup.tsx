@@ -22,7 +22,10 @@ export default function Setup({ backUrl, i18n, payload }: Args) {
 	})
 
 	if (backUrl) {
-		url += `?back=${encodeURIComponent(backUrl)}`
+		// `req.url` is absolute and, without a `serverURL`, always `http://<host>`, so on an HTTPS
+		// site its origin is not the page's and the setup view would refuse to come back to it.
+		const { pathname, search } = new URL(backUrl, 'http://localhost')
+		url += `?back=${encodeURIComponent(`${pathname}${search}`)}`
 	}
 
 	return (
