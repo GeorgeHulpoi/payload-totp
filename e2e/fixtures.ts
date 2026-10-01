@@ -4,12 +4,12 @@ import { mkdir, rm } from 'fs/promises'
 import getPort, { portNumbers } from 'get-port'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { platform } from 'node:os'
-import { Secret, TOTP } from 'otpauth'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { v4 as uuidv4 } from 'uuid'
 
 import { createFirstUser } from './helpers/create-first-user'
+import { enterSetupCode } from './helpers/enter-setup-code'
 import { login } from './helpers/login'
 import { logout } from './helpers/logout'
 import { promptTotp } from './helpers/prompt-totp'
@@ -25,6 +25,7 @@ export const test = base.extend<
 	{
 		helpers: {
 			createFirstUser: typeof createFirstUser
+			enterSetupCode: typeof enterSetupCode
 			logout: typeof logout
 			login: typeof login
 			promptTotp: typeof promptTotp
@@ -32,6 +33,8 @@ export const test = base.extend<
 				page: Page
 				baseURL: string
 				adminRoute?: string
+				back?: string
+				expectedURL?: string
 			}) => Promise<{ totpSecret: string }>
 		}
 	},
@@ -146,41 +149,30 @@ export const test = base.extend<
 	helpers: async ({}, use) => {
 		await use({
 			createFirstUser,
+			enterSetupCode,
 			logout,
 			login,
 			promptTotp,
 			setupTotp: async ({
 				page,
 				baseURL,
-				back = '/admin',
+				// `adminRoute` comes first so that `back` can default to it: the setup view only
+				// sends the user back inside the admin route.
 				adminRoute = '/admin',
+				back = adminRoute,
+				expectedURL = `${baseURL}${back}`,
 			}: {
 				page: Page
 				baseURL: string
-				back?: string
 				adminRoute?: string
+				back?: string
+				expectedURL?: string
 			}) => {
-				await page.goto(`${baseURL}${adminRoute}/setup-totp?back=${encodeURI(back)}`)
-				await page.getByRole('button', { name: 'Add code manually' }).click()
-				const rawSecret = await page.getByRole('code').textContent()
-				const totpSecret = rawSecret?.replace(/\s/g, '') ?? ''
-
-				const totp = new TOTP({
-					algorithm: 'SHA1',
-					digits: 6,
-					issuer: 'Payload',
-					label: 'human@domain.com',
-					period: 30,
-					secret: Secret.fromBase32(totpSecret),
-				})
-
-				const token = totp.generate()
-
-				await page.locator('css=input:first-child[type="text"]').focus()
-				await page
-					.locator('css=input:first-child[type="text"]')
-					.pressSequentially(token, { delay: 300 })
-				await page.waitForURL(`${baseURL}${back}`)
+				await page.goto(
+					`${baseURL}${adminRoute}/setup-totp?back=${encodeURIComponent(back)}`,
+				)
+				const { totpSecret } = await enterSetupCode({ page })
+				await page.waitForURL(expectedURL)
 
 				return { totpSecret }
 			},
