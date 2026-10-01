@@ -195,6 +195,24 @@ describe("Payload's own collections, added after plugins", () => {
 		await expect(late.jobs.access.read(argsFor(forced, verified))).resolves.toBe(true)
 	})
 
+	// Payload appends it whenever a job has a `schedule`; writing it can stall scheduled jobs.
+	test('onInit wraps the job schedule stats global', async () => {
+		const config = payloadTotp(forced as never)(buildConfig())
+		const jobsStats = {
+			slug: 'payload-jobs-stats',
+			access: { read: allow(), update: allow() },
+			fields: [],
+		}
+		const payload = { config: { ...config, globals: [...config.globals!, jobsStats] } }
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await config.onInit!(payload as any)
+
+		expect(await jobsStats.access.update(argsFor(forced, enrolledUnverified))).toBe(false)
+		expect(await jobsStats.access.read(argsFor(forced, unenrolled))).toBe(false)
+		expect(await jobsStats.access.update(argsFor(forced, verified))).toBe(true)
+	})
+
 	// The dashboard reads locks with access enforced and no error handling, right after login.
 	test('leaves reading locks alone', async () => {
 		const late = lateCollections()

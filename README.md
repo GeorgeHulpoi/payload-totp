@@ -105,7 +105,7 @@ for whenever the plugin is enabled again.
 
 By default, the plugin does not force users to configure TOTP. The TOTP verification will only be prompted if the user has configured it. This option forces all users to configure their TOTP after login, enhancing security by ensuring 2FA is enabled for all accounts.
 
-The access wrapper enforces it as well, not only the admin panel. Until a user has set TOTP up, every operation is refused except reading their own document in the TOTP collection, which `/api/<collection>/me` needs; setting TOTP up goes through the plugin's own endpoint. This holds for REST, GraphQL and the Local API with `overrideAccess: false`, and for `totpAccess` applied by hand. API keys, and users of other auth collections (who can't set TOTP up), are not affected. A user counts as enrolled through the `hasTotp` field read with their document, so a custom auth strategy that builds the user without it is treated as not enrolled.
+The access wrapper enforces it as well, not only the admin panel. Until a user has set TOTP up, every operation the [access wrapper](#access-wrapper) covers is refused, except reading their own document in the TOTP collection, which `/api/<collection>/me` needs; setting TOTP up goes through the plugin's own endpoint. This holds for REST, GraphQL and the Local API with `overrideAccess: false`, and for `totpAccess` applied by hand. API keys, and users of other auth collections (who can't set TOTP up), are not affected. A user counts as enrolled through the `hasTotp` field read with their document, so a custom auth strategy that builds the user without it is treated as not enrolled.
 
 Access left unwrapped (`disableAccessWrapper`, `custom.totp.disableAccessWrapper`) and custom endpoints are not covered. Wrap them with `totpAccess`; on the TOTP collection's `read`, pass `allowOwnDocumentDuringSetup` so that `me` keeps working:
 
@@ -136,14 +136,14 @@ By default, PayloadCMS has access set to `({user}) => Boolean(user)`. Since Payl
 
 The plugin will override the provided access function. This means that TOTP verifications will be called first, and if successful, it will then call the original function and return its result. This approach ensures compatibility with role-based access control and other custom access patterns.
 
-Payload adds some collections of its own after all plugins have run. When Payload initializes, the plugin wraps the ones that hold data — jobs, folders and query presets — and writes to document locks; reading locks stays open, because the dashboard needs it. Collections added by plugins listed after this one are not wrapped, which is one more reason to keep it last. The `jobs.access.run` function behind `/api/payload-jobs/run` is not wrapped either; if you run jobs that way, combine your check with `totpAccess`:
+Payload adds some collections of its own after all plugins have run. When Payload initializes, the plugin wraps the ones that hold data — jobs and the global their schedules are computed from, folders and query presets — and writes to document locks; reading locks stays open, because the dashboard needs it, and so do per-user preferences. Collections added by plugins listed after this one are not wrapped, which is one more reason to keep it last. The `jobs.access.run` function behind `/api/payload-jobs/run` and `/api/payload-jobs/handle-schedules` is not wrapped either; if you run jobs that way, combine your check with `totpAccess`:
 
 ```ts
 jobs: {
 	access: {
-		run: (args) =>
+		run: async (args) =>
 			args.req.headers.get('authorization') === `Bearer ${process.env.CRON_SECRET}` ||
-			totpAccess()(args),
+			(await totpAccess()(args)) === true,
 	},
 },
 ```

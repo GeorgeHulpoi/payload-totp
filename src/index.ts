@@ -65,10 +65,11 @@ const wrappedConfigs = new WeakSet<object>()
 /**
  * Payload appends some collections of its own after every plugin has run, so the wrapping in
  * `payloadTotp` never sees them. These hold what a session that still owes a code must not
- * reach: jobs (whose inputs and outputs are stored, and creating one queues it), folders and
- * saved list filters. Locks can't be written either, but reading them stays open: the
- * dashboard reads them with access enforced and no error handling, and it renders right after
- * login, before the redirect to the verify or setup view lands.
+ * reach: jobs (whose inputs and outputs are stored, and creating one queues it) and the global
+ * their schedules are computed from, folders and saved list filters. Locks can't be written
+ * either, but reading them stays open: the dashboard reads them with access enforced and no
+ * error handling, and it renders right after login, before the redirect to the verify or
+ * setup view lands.
  *
  * Collections of plugins listed after this one are left alone; their public access would
  * break. Payload's dev-mode reload swaps the config without calling `onInit`, so this pass
@@ -98,6 +99,12 @@ function wrapPayloadCollections(payload: Payload, pluginOptions: PayloadTOTPConf
 
 		if (operations) {
 			collection.access = wrapAccess(pluginOptions, collection, operations)
+		}
+	}
+
+	for (const global of config.globals) {
+		if (global.slug === 'payload-jobs-stats') {
+			global.access = wrapAccess(pluginOptions, global, globalOperations)
 		}
 	}
 }
