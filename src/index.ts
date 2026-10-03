@@ -15,10 +15,12 @@ import { setSecret } from './api/setSecret.js'
 import { verifyToken } from './api/verifyToken.js'
 import { deleteCookieAfterLogout } from './hooks/deleteCookieAfterLogout.js'
 import { refreshTotpCookieAfterRefresh } from './hooks/refreshTotpCookieAfterRefresh.js'
+import { resetCodeAttemptsAfterUnlock } from './hooks/resetCodeAttemptsAfterUnlock.js'
 import { setHasTotp } from './hooks/setHasTotp.js'
 import { i18n } from './i18n/index.js'
 import { strategy } from './strategy.js'
 import { totpAccess, type TotpAccessOptions } from './totpAccess.js'
+import { totpAttemptsCollection } from './utilities/codeAttempts.js'
 
 const collectionOperations = [
 	'create',
@@ -148,14 +150,17 @@ const payloadTotp =
 		if (pluginOptions.disabled) {
 			return {
 				...config,
-				collections: (config.collections || []).map((collection) =>
-					collection.slug === pluginOptions.collection
-						? {
-								...collection,
-								fields: [...(collection.fields || []), totpSecretField],
-							}
-						: collection,
-				),
+				collections: [
+					...(config.collections || []).map((collection) =>
+						collection.slug === pluginOptions.collection
+							? {
+									...collection,
+									fields: [...(collection.fields || []), totpSecretField],
+								}
+							: collection,
+					),
+					totpAttemptsCollection,
+				],
 				custom,
 			}
 		}
@@ -293,6 +298,10 @@ const payloadTotp =
 									...(collection.hooks?.afterLogout || []),
 									deleteCookieAfterLogout,
 								],
+								afterOperation: [
+									...(collection.hooks?.afterOperation || []),
+									resetCodeAttemptsAfterUnlock,
+								],
 								afterRefresh: [
 									...(collection.hooks?.afterRefresh || []),
 									refreshTotpCookieAfterRefresh,
@@ -306,6 +315,8 @@ const payloadTotp =
 						}
 					}
 				}),
+				// Added unwrapped: nobody is given access to it.
+				totpAttemptsCollection,
 			],
 			custom,
 			endpoints: [

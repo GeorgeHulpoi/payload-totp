@@ -21,7 +21,7 @@ This plugin enhances security by wrapping the existing access controls under a T
 - Built-in support for both dark and light themes.
 - Compatible with API key authentication.
 - Works with any authentication strategy supported by PayloadCMS.
-- Counts wrong codes toward Payload's login lockout, so codes cannot be brute-forced.
+- Locks the account after too many wrong codes, with the collection's login lockout settings.
 
 ## Installation
 Install the plugin using any JavaScript package manager like [pnpm](https://pnpm.io/), [npm](https://npmjs.com/), or [Yarn](https://yarnpkg.com/):
@@ -98,9 +98,11 @@ functions are left alone, the TOTP strategy, the admin provider, the setup and
 verify views and the endpoints are not added, and the account page shows no
 authenticator field.
 
-The `totpSecret` field stays on the collection, so toggling the option doesn't
-change the database schema and users who had already enrolled keep their secret
-for whenever the plugin is enabled again.
+The `totpSecret` field stays on the collection, and the `totp-attempts`
+collection of the [brute-force protection](#brute-force-protection) stays
+registered, so toggling the option doesn't change the database schema and users
+who had already enrolled keep their secret for whenever the plugin is enabled
+again.
 
 ### `forceSetup`
 
@@ -206,9 +208,19 @@ export const posts: CollectionConfig = {
 
 ## Brute-force Protection
 
-A code has a million possible values with the default six digits, and the verification accepts the codes for the previous and next 30-second step as well, so an unlimited number of tries would eventually land on one. Every code submitted to `/verify-totp` and `/remove-totp` therefore counts toward the collection's login lockout, exactly like a wrong password would: after [`maxLoginAttempts`](https://payloadcms.com/docs/authentication/overview#config-options) wrong codes the account is locked for `lockTime`, the forms show Payload's usual "too many failed login attempts" message, and an admin can unlock the user from the list view. A correct code clears the count.
+A code has a million possible values with the default six digits, and the verification accepts the codes for the previous and next 30-second step as well, so an unlimited number of tries would eventually land on one. Every code submitted to `/verify-totp` and `/remove-totp` is therefore counted: after [`maxLoginAttempts`](https://payloadcms.com/docs/authentication/overview#config-options) codes without a correct one, codes are refused for `lockTime`, exactly as passwords are after that many wrong ones. The forms show Payload's usual "too many failed login attempts" message, and the lock is copied to the user so that the password login answers the same. Another user can lift the lock with **Force Unlock** on the locked user's edit view. A correct code clears the count.
 
-Nothing needs to be configured. The count is Payload's own `loginAttempts` field on the auth collection, and setting `maxLoginAttempts: 0` on the collection turns the lockout off for codes as it does for passwords.
+Nothing needs to be configured: `maxLoginAttempts` and `lockTime` are the collection's own, and `maxLoginAttempts: 0` turns the lockout off for codes as it does for passwords.
+
+Payload's default `unlock` access is any logged-in user. Users cannot lift their own lock on codes, but any other account can, so restrict who unlocks, as you would to protect the password lockout:
+
+```ts
+access: {
+	unlock: ({ req: { user } }) => user?.role === 'admin',
+},
+```
+
+The count and the lock are kept in a collection that the plugin adds, `totp-attempts`, with one document per user who has submitted a code, under the user's ID. They are not on the user document because Payload's login, refresh and logout write back the whole user document they read when they started, which would let someone who knows the password put the count back. The collection is hidden from the admin panel, left out of GraphQL, and its access functions refuse every request; it stays registered when the plugin is [`disabled`](#disabled), so the schema does not change with the option. On Postgres and SQLite it is a new table, `totp_attempts`, so create and run a [migration](https://payloadcms.com/docs/database/migrations) when you upgrade.
 
 ## Dashboard Walkthrough
 
