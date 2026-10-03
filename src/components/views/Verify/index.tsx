@@ -46,7 +46,7 @@ export const TOTPVerify: React.FC<Args> = (args) => {
 		redirect(url)
 	}
 
-	if (!user.hasTotp || (user.hasTotp && (user as any).strategy === 'totp')) {
+	if (!user.hasTotp || (user.hasTotp && user._strategy === 'totp')) {
 		const url = formatAdminURL({
 			adminRoute,
 			path: '/',
@@ -65,6 +65,7 @@ export const TOTPVerify: React.FC<Args> = (args) => {
 					.replace('{digits}', (pluginOptions.totp?.digits || 6).toString())}
 			</p>
 			<Form
+				adminRoute={adminRoute}
 				apiRoute={apiRoute}
 				back={(typeof back === 'string' && back) || undefined}
 				length={pluginOptions.totp?.digits}

@@ -1,11 +1,13 @@
-import type { Payload, User } from 'payload'
+import type { Payload } from 'payload'
+
+import type { AuthenticatedUser } from '../types.js'
 
 import { TOTP_STRATEGY_NAME } from '../constants.js'
 import { readTotpCookie } from './readTotpCookie.js'
 
 type Args = {
 	payload: Payload
-	user: User
+	user: AuthenticatedUser
 }
 
 /**
@@ -19,8 +21,7 @@ export async function resolveOriginalStrategy({
 	payload,
 	user,
 }: Args): Promise<string | undefined> {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const strategyName = (<any>user)?._strategy
+	const strategyName = user?._strategy
 
 	if (typeof strategyName === 'string' && strategyName && strategyName !== TOTP_STRATEGY_NAME) {
 		return strategyName

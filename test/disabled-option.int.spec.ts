@@ -129,6 +129,12 @@ describe('disabled: true', () => {
 		expect(config.endpoints ?? []).toHaveLength(0)
 	})
 
+	test('does not add an onInit', () => {
+		const config = payloadTotp({ collection: 'users', disabled: true })(buildConfig())
+
+		expect(config.onInit).toBeUndefined()
+	})
+
 	test('does not add the logout and refresh hooks', () => {
 		const config = payloadTotp({ collection: 'users', disabled: true })(buildConfig())
 		const users = collectionBySlug(config, 'users')

@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-exports */
 
 import type { I18nClient } from '@payloadcms/translations'
-import type { Payload, User } from 'payload'
+import type { Payload, TypedUser } from 'payload'
 
 import { Modal } from '@payloadcms/ui'
 
@@ -17,7 +17,7 @@ type Args = {
 	i18n: I18nClient<CustomTranslationsObject, CustomTranslationsKeys>
 	payload: Payload
 	pluginOptions: PayloadTOTPConfig
-	user: User
+	user: TypedUser
 }
 
 export default function Remove({ i18n, payload, pluginOptions, user }: Args) {

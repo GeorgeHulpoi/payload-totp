@@ -96,6 +96,7 @@ export const TOTPSetup: React.FC<Args> = (args) => {
 						.replace('{digits}', (pluginOptions.totp?.digits || 6).toString())}
 				</p>
 				<Form
+					adminRoute={adminRoute}
 					apiRoute={apiRoute}
 					back={(typeof back === 'string' && back) || undefined}
 					length={pluginOptions.totp?.digits}

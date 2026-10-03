@@ -1,15 +1,15 @@
-import type { Payload, User } from 'payload'
+import type { Payload } from 'payload'
 
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers.js'
 
-import type { TotpTokenPayload } from '../types.js'
+import type { AuthenticatedUser, TotpTokenPayload } from '../types.js'
 
 import { TOTP_STRATEGY_NAME } from '../constants.js'
 
 type Args = {
 	payload: Payload
-	user: User
+	user: AuthenticatedUser
 }
 
 /**

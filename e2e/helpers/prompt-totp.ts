@@ -2,11 +2,12 @@ import { type Page } from '@playwright/test'
 import { Secret, TOTP } from 'otpauth'
 
 type Args = {
+	expectedURL?: RegExp | string
 	page: Page
 	totpSecret: string
 }
 
-export async function promptTotp({ page, totpSecret }: Args) {
+export async function promptTotp({ expectedURL = /^(.*?)\/admin$/g, page, totpSecret }: Args) {
 	const totp = new TOTP({
 		algorithm: 'SHA1',
 		digits: 6,
@@ -22,5 +23,5 @@ export async function promptTotp({ page, totpSecret }: Args) {
 		.locator('css=input:first-child[type="text"]')
 		.pressSequentially(token, { delay: 300 })
 
-	await page.waitForURL(/^(.*?)\/admin$/g)
+	await page.waitForURL(expectedURL)
 }
