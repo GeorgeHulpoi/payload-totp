@@ -163,6 +163,12 @@ describe('disabled: true', () => {
 		expect(totpSecret.type).toBe('text')
 	})
 
+	test('keeps the totp-attempts collection so the database schema is unchanged', () => {
+		const config = payloadTotp({ collection: 'users', disabled: true })(buildConfig())
+
+		expect(collectionBySlug(config, 'totp-attempts')).toBeDefined()
+	})
+
 	test('keeps pluginOptions on the config so a manual totpAccess can read them', () => {
 		const config = payloadTotp({ collection: 'users', disabled: true })(buildConfig())
 
