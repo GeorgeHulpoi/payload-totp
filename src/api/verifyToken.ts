@@ -7,6 +7,7 @@ import type { CustomTranslationsKeys, CustomTranslationsObject } from '../i18n/t
 import type { PayloadTOTPConfig, UserWithTotp } from '../types.js'
 
 import { setCookie } from '../setCookie.js'
+import { countCodeAttempt } from '../utilities/codeAttempts.js'
 import { getTotpSecret } from '../utilities/getTotpSecret.js'
 import { resolveOriginalStrategy } from '../utilities/resolveOriginalStrategy.js'
 
@@ -43,6 +44,18 @@ export function verifyToken(pluginOptions: PayloadTOTPConfig) {
 			return Response.json({ message: i18n.t('error:unspecific'), ok: false })
 		}
 
+		const collection = payload.collections[pluginOptions.collection]
+		const attempt = await countCodeAttempt({
+			collection: collection.config,
+			payload,
+			req,
+			user,
+		})
+
+		if (attempt.refusal) {
+			return attempt.refusal
+		}
+
 		const totpSecret = await getTotpSecret({
 			collection: pluginOptions.collection,
 			payload,
@@ -66,7 +79,7 @@ export function verifyToken(pluginOptions: PayloadTOTPConfig) {
 			return Response.json({ message: i18n.t('totpPlugin:setup:incorrectCode'), ok: false })
 		}
 
-		const collection = payload.collections[pluginOptions.collection]
+		await attempt.reset()
 
 		await setCookie({
 			authConfig: collection.config.auth,

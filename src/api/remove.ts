@@ -6,6 +6,7 @@ import { Secret, TOTP } from 'otpauth'
 import type { CustomTranslationsKeys, CustomTranslationsObject } from '../i18n/types.js'
 import type { PayloadTOTPConfig, UserWithTotp } from '../types.js'
 
+import { countCodeAttempt } from '../utilities/codeAttempts.js'
 import { getTotpSecret } from '../utilities/getTotpSecret.js'
 import { removeCookie } from '../utilities/removeCookie.js'
 
@@ -40,6 +41,18 @@ export function removeEndpointHandler(pluginOptions: PayloadTOTPConfig) {
 			return Response.json({ message: i18n.t('error:unspecific'), ok: false })
 		}
 
+		const collection = payload.collections[pluginOptions.collection]
+		const attempt = await countCodeAttempt({
+			collection: collection.config,
+			payload,
+			req,
+			user,
+		})
+
+		if (attempt.refusal) {
+			return attempt.refusal
+		}
+
 		const totpSecret = await getTotpSecret({
 			collection: pluginOptions.collection,
 			payload,
@@ -62,6 +75,8 @@ export function removeEndpointHandler(pluginOptions: PayloadTOTPConfig) {
 		if (delta === null) {
 			return Response.json({ message: i18n.t('totpPlugin:setup:incorrectCode'), ok: false })
 		}
+
+		await attempt.reset()
 
 		await payload.update({
 			id: user.id,
