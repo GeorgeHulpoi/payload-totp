@@ -61,6 +61,8 @@ export default function OTPForm({ apiRoute, length, serverURL }: Args) {
 				.then((ok) => {
 					if (ok) {
 						location.reload()
+					} else {
+						form.current?.reset()
 					}
 					setIsPending(false)
 				})

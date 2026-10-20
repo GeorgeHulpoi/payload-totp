@@ -4,7 +4,7 @@
 
 import type { FormEvent } from 'react'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { cn } from '../../utilities/cn.js'
 import styles from './index.module.scss'
@@ -20,6 +20,12 @@ export default function OTPInput({ name, disabled, length = 6, onFilled }: Args)
 	const inputs = useRef<HTMLInputElement[]>(Array(length).fill(null))
 	const hiddenInput = useRef<HTMLInputElement>(null)
 	const isFilled = hiddenInput.current?.value.length === length
+
+	useEffect(() => {
+		if (!disabled) {
+			inputs.current[0]?.focus()
+		}
+	}, [disabled])
 
 	const moveToPrev = (currentIndex: number) => {
 		if (currentIndex > 0) {
