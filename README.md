@@ -243,3 +243,7 @@ Now, when you log out and log back in, you'll be prompted to enter your TOTP PIN
 ![login_video](https://github.com/user-attachments/assets/432941af-1cd4-4321-b2c5-0cb41bde90de)
 
 After entering the correct PIN, you'll be redirected to the main dashboard page.
+
+## License
+
+[MIT](./LICENSE)
