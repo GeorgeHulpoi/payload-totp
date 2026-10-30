@@ -68,6 +68,8 @@ export default function OTPForm({ adminRoute, apiRoute, back, length, secret, se
 						location.replace(
 							getSafeBackURL({ adminRoute, back, origin: window.location.origin }),
 						)
+					} else {
+						form.current?.reset()
 					}
 					setIsPending(false)
 				})
